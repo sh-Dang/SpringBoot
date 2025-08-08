@@ -1,0 +1,32 @@
+###게시물 가져오기
+GET http://localhost:9999/shop/boards
+Content-Type:application/json
+
+###게시물 등록
+POST http://localhost:9999/shop/boards
+Content-Type:application/json
+
+{
+    "title":"게시판 등록 테스트",
+    "writer":"zino",
+    "content":"내용",
+    "hit":3
+}
+
+###게시물 한 건 조회
+GET http://localhost:9999/shop/boards/2
+Content-Type:application/json
+
+###게시물 한 건 업데이트
+PUT http://localhost:9999/shop/boards/2
+Content-Type:application/json
+
+{
+    "title":"게시판 등록 테스트",
+    "writer":"Lee",
+    "content":"내용생겼음"
+}
+
+###게시물 한 건 삭제
+DELETE http://localhost:9999/shop/boards/2
+Content-Type:application/json

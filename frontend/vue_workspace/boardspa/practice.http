@@ -1,0 +1,12 @@
+### 리스트 조회하기
+
+
+POST http://localhost:8888/prac/boards
+Content-Type:application/json
+
+{
+    "title":"게시판 등록 테스트",
+    "writer":"zino",
+    "content":"내용",
+    "hit":30
+}
