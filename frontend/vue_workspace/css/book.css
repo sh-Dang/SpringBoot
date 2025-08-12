@@ -1,0 +1,123 @@
+/* 전체 영역 */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background-color: #f8f9fa;
+    color: #333;
+}
+
+/* 앱 전체 레이아웃 */
+#app {
+    width: 90%;
+    max-width: 1000px;
+    margin: 40px auto;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+}
+
+/* 헤더 영역 */
+#content_header {
+    padding: 20px;
+    background: #4e73df;
+    display: flex;
+    gap: 10px;
+}
+
+#content_header input[type="text"] {
+    flex: 1;
+    padding: 10px 14px;
+    border: none;
+    border-radius: 6px;
+    font-size: 15px;
+}
+
+#content_header input[type="text"]:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(78, 115, 223, 0.3);
+}
+
+#content_header input[type="button"] {
+    padding: 10px 20px;
+    background: #2e59d9;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+#content_header input[type="button"]:hover {
+    background: #224abe;
+}
+
+/* 테이블 스타일 */
+#content_body {
+    padding: 20px;
+}
+
+#content_body table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+#content_body th {
+    background: #f1f3f9;
+    color: #444;
+    text-align: left;
+    padding: 12px;
+    border-bottom: 2px solid #dee2e6;
+}
+
+#content_body td {
+    padding: 12px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+#content_body tr:hover {
+    background-color: #f8f9fa;
+}
+
+/* 반응형 */
+@media (max-width: 600px) {
+    #content_header {
+        flex-direction: column;
+    }
+
+    #content_header input[type="button"] {
+        width: 100%;
+    }
+
+    #content_body table,
+    #content_body thead,
+    #content_body tbody,
+    #content_body th,
+    #content_body td,
+    #content_body tr {
+        display: block;
+        width: 100%;
+    }
+
+    #content_body tr {
+        margin-bottom: 15px;
+    }
+
+    #content_body td {
+        padding: 10px;
+        text-align: right;
+        position: relative;
+    }
+
+    #content_body td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 10px;
+        color: #6c757d;
+        font-weight: bold;
+        text-align: left;
+    }
+}

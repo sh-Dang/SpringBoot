@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../css/book.css"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+<body>
+    <div id="app">
+        <h2>*부산 도서관 주간 인기대출 도서</h2>
+        <div id="content_header">
+            <input type="text" placeholder="검색할 도서를 입력하세요" v-model="book_name">
+            <input type="button" value="검색" @click="getBookList(book_name)">
+        </div>
+        <div id="content_body">
+            <table>
+                <tr>
+                    <th>순위</th>
+                    <th>표제</th>
+                    <th>저자명</th>
+                    <th>대출횟수</th>
+                    <th>발행자</th>
+                </tr>
+                <tr v-for="item in bookList" :key="item.rank">
+                    <td>{{item.rank}}</td>
+                    <td>{{item.title}}</td>
+                    <td>{{item.author}}</td>
+                    <td>{{item.cnt}}</td>
+                    <td>{{item.publisher}}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+<script>
+    const {createApp, reactive, ref} = Vue;
+    createApp({
+        setup(){
+            const bookList=reactive([]);
+
+            const getBookList=(book_name)=>{
+                book_name=(book_name==undefined)?"":book_name;
+                $.ajax({
+                    url:"http://localhost:7777/book/books?book_name="+book_name,
+                    method:"GET",
+                    dataType:"JSON",
+                    success:(result, status, xhr)=>{
+                        console.log("받아온 책 목록은", result);
+                        bookList.splice(0);
+                        result.response.body.items.item.forEach((item)=>{
+                            bookList.push(item);
+                        });
+                    }
+                })
+            }
+            
+        
+
+            getBookList();
+            return {bookList, getBookList};
+        }
+
+    }).mount("#app");
+</script>
+</body>
+</html>

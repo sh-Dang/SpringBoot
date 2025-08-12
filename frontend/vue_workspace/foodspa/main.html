@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../css/food.css"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+<body>
+    <div id="app">
+        <div id="content_header">
+            <input type="text" placeholder="검색할 상호명을 입력하세요"></textarea>
+            <input type="button" value="검색">
+        </div>
+        <div id="content_body">{{msg}}
+            <table>
+            <tr>
+                <th>상호명</th>
+                <th>연락처</th>
+                <th>위도</th>
+                <th>경도</th>
+                <th>관할지역</th>
+                <th>대표메뉴</th>
+                <th>소개</th>
+            </tr>
+            <tr v-for="store in storeList">
+                <td>{{store.CMPNO}}</td>
+                <td>{{store.TELNO}}</td>
+                <td>{{store.lo}}</td>
+                <td>{{store.la}}</td>
+                <td>{{store.SIGUN}}</td>
+                <td>{{store.MNMNU}}</td>
+                <td>{{store.DC}}</td>
+            </tr>
+            </table>
+        </div>
+    </div>
+    <script>
+        const {createApp, reactive, ref} = Vue;
+        //Vue 3.0부터는 setup() 메서드안에 필요한 변수 및 메서드를 한꺼번에 등록
+        //단, 등록된 변수 및 메서드를 Vue에게 반환(return)
+        createApp({
+            setup(){
+                const storeList = reactive([]);
+                let msg = ref("띠용");//바인딩 데이터 선언
+                                    //디자인과 메모리가 엮여있는 아이들(=보간으로 매핑돼있다)
+
+                //음식 목록 요청 메서드 정의
+                const getList=store_name=>{
+                    store_name=(store_name==undefined)?"":store_name;
+                    $.ajax({
+                        url:"http://localhost:7777/food/stores?store_name="+store_name,
+                        method:"GET",
+                        dataType:"JSON",
+                        success:(result, status, xhr)=>{
+                            console.log("서버로부터 받은 음식점 목록은", result);
+                            storeList.splice(0);//removeAll
+                            result.body.forEach((store)=>{
+                                storeList.push(store);
+                            });
+                            console.log("서버로부터 받은 음식점 목록 바디는", result.body);
+                            
+                        }
+                    })
+                }
+
+                getList();
+                return{msg, getList, storeList};
+            }
+
+        }).mount("#app");
+    </script>
+</body>
+</html>

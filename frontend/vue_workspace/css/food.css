@@ -1,0 +1,60 @@
+    #app {
+      width: 1400px;
+      height: 800px;
+      margin: 0 auto;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    #content_header {
+      height: 60px;
+      width: 100%;
+      background: grey;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 15px;
+      padding: 0 20px;
+      box-sizing: border-box;
+      border-radius: 8px;
+    }
+    input[type="text"] {
+      width: 300px;
+      height: 36px;
+      padding: 6px 10px;
+      font-size: 16px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      outline: none;
+      transition: border-color 0.3s;
+    }
+    input[type="text"]:focus {
+      border-color: #4a90e2;
+      box-shadow: 0 0 5px rgba(74, 144, 226, 0.5);
+    }
+    input[type="button"] {
+      height: 38px;
+      padding: 0 20px;
+      font-size: 16px;
+      background-color: #4a90e2;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    input[type="button"]:hover {
+        background-color: #357ABD;
+    }
+    #content_body {
+        height: 740px;
+        width: 100%;
+        border-radius: 8px;
+        box-sizing: border-box;
+        background-color: #ccc;
+        padding: 20px;
+    }
+    table{
+      width: 100%;
+    }
+    th, td{
+      border-collapse: collapse;
+    }
