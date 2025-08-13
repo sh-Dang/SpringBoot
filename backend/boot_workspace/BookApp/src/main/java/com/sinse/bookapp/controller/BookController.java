@@ -32,7 +32,7 @@ public class BookController {
         urlBuilder.append("&" + URLEncoder.encode("author","UTF-8") + "=" + URLEncoder.encode("", "UTF-8")); /*저자명*/
         URL url = new URL(urlBuilder.toString());
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setRequestMethod("GET");
+        conn.setRequestMethod("G    ET");
         conn.setRequestProperty("Content-type", "application/json");
         System.out.println("Response code: " + conn.getResponseCode());
         BufferedReader rd;

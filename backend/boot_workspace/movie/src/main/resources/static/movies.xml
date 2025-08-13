@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<movies>
+    <movie>
+        <title>기생충</title>
+        <director>봉준호</director>
+        <year>2019</year>
+        <genre>드라마, 스릴러</genre>
+        <rating>8.6</rating>
+    </movie>
+    <movie>
+        <title>인터스텔라</title>
+        <director>크리스토퍼 놀란</director>
+        <year>2014</year>
+        <genre>SF, 모험</genre>
+        <rating>8.7</rating>
+    </movie>
+    <movie>
+        <title>라라랜드</title>
+        <director>데이미언 셔젤</director>
+        <year>2016</year>
+        <genre>뮤지컬, 로맨스</genre>
+        <rating>8.0</rating>
+    </movie>
+    <movie>
+        <title>어벤져스: 엔드게임</title>
+        <director>앤서니 루소, 조 루소</director>
+        <year>2019</year>
+        <genre>액션, SF</genre>
+        <rating>8.4</rating>
+    </movie>
+    <movie>
+        <title>인셉션</title>
+        <director>크리스토퍼 놀란</director>
+        <year>2010</year>
+        <genre>SF, 스릴러</genre>
+        <rating>8.8</rating>
+    </movie>
+</movies>

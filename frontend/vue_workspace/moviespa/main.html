@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+<link rel="stylesheet" href="../css/movie.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+<body>
+    <div id="app">
+        <table>
+            <tr>
+                <th>제목</th>
+                <th>감독</th>
+                <th>개봉년도</th>
+                <th>장르</th>
+                <th>평점</th>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        </table>
+    </div>
+    <script>
+        const {createApp, ref, reactive} = Vue;
+        createApp({
+            setup(){
+                const movieList = reactive([]);
+                const getMovieList=()=>{
+                    console.log("영화 목록 가져오기");
+                    
+                }
+
+                getMovieList();
+                return {movieList, getMovieList}
+            }
+            
+        }).mount("#app");
+    </script>
+</body>
+</html>

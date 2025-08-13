@@ -1,0 +1,44 @@
+/* movie.css */
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #2b2b2b; /* 진한 다크 그레이 */
+    padding: 20px;
+    color: #ddd;
+}
+
+div {
+    max-width: 900px;
+    margin: 0 auto;
+    background-color: #1f1f1f; /* 더 어두운 배경 */
+    border-radius: 8px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.7);
+    padding: 20px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+}
+
+th, td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #444;
+}
+
+th {
+    background-color: #333; /* 진한 회색 */
+    color: #eee;
+    font-weight: 600;
+    letter-spacing: 1px;
+}
+
+tr:hover {
+    background-color: #444; /* 마우스 올리면 중간 회색 */
+}
+
+td {
+    font-size: 15px;
+    color: #bbb;
+}

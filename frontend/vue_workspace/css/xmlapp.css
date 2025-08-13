@@ -1,0 +1,41 @@
+    #app {
+        max-width: 600px;
+        margin: 40px auto;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        background: #fffafc;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(255, 182, 193, 0.3);
+    }
+
+    th {
+        background: #ffb6c1;
+        color: white;
+        padding: 12px;
+        font-size: 16px;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    td {
+        padding: 10px;
+        text-align: center;
+        border-bottom: 1px solid #ffe4ec;
+        font-size: 14px;
+        color: #555;
+    }
+
+    tr:last-child td {
+        border-bottom: none;
+    }
+
+    tr:hover {
+        background: #fff0f5;
+        transition: background 0.3s ease;
+    }

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+<link rel="stylesheet" href="../css/xmlapp.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+<body>
+    <div id="app">
+        <table>
+            <tr>
+                <th>이름</th>
+                <th>나이</th>
+                <th>직업</th>
+                <th>연락처</th>
+            </tr>
+            <tr v-for="member in memberList" :key="tel">
+                <td>{{member.name}}</td>
+                <td>{{member.age}}</td>
+                <td>{{member.job}}</td>
+                <td>{{member.tel}}</td>
+            </tr>
+        </table>
+    </div>
+<script>
+    const {createApp, reactive, ref} = Vue;
+    createApp({
+        setup(){
+            const memberList = reactive([])
+            const getList=()=>{
+                console.log("목록가져오기");
+                $.ajax({
+                    url:"http://localhost:8888/members",
+                    method:"GET",
+                    dataType:"JSON",
+                    success:(result, status, xhr)=>{
+                        console.log("받아온 결과는 "+result);
+                        memberList.splice(0);
+                        result.forEach((member)=>{
+                            memberList.push(member);
+                        })
+                    }
+                })
+            }
+            
+            getList();
+            return{memberList, getList}
+        }
+    }).mount("#app")
+</script>
+</body>
+</html>
