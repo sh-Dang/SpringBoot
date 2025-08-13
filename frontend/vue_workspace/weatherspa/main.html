@@ -43,7 +43,7 @@
                         success:(result, status, xhr)=>{
                             console.log(result);
                             weatherList.splice(0);
-                            result.response.body.items.item.forEach((weather)=>{
+                            result.items.item.forEach((weather)=>{
                                 weatherList.push(weather);
                             })
                         },

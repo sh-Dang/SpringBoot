@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /*
- * XM parsing방법
+ * XML parsing방법
  * 1)DOM - 메모리에 모든 요소를 DOM에 올리는 방식(메모리 무거움)
  *          특히 스마트폰용 웹을 동시 지원 할 경우 사용을 지양
  * 2)SAX - 실행부가 xml 문서를 위에서 아래 방향으로 진행하면서
