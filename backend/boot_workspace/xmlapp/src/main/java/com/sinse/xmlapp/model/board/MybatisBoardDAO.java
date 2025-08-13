@@ -12,7 +12,7 @@ public class MybatisBoardDAO implements BoardDAO {
 
     private BoardMapper boardMapper;
 
-    public void MybatisBoardDAO(BoardMapper boardMapper) {
+    public MybatisBoardDAO(BoardMapper boardMapper) {
         this.boardMapper = boardMapper;
     }
     @Override

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+<link rel="stylesheet" href="../css/movie.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+<body>
+    <div id="app">
+        <table>
+            <tr>
+                <th>obsrValue</th>
+                <th>baseDate</th>
+                <th>nx</th>
+                <th>ny</th>
+                <th>category</th>
+                <th>baseTime</th>
+            </tr>
+            <tr v-for="item in weatherList" :key="obsrValue">
+                <td>{{item.obsrValue}}</td>
+                <td>{{item.baseDate}}</td>
+                <td>{{item.nx}}</td>
+                <td>{{item.ny}}</td>
+                <td>{{item.category}}</td>
+                <td>{{item.baseTime}}</td>
+            </tr>
+        </table>
+    </div>
+    <script>
+        const {createApp, ref, reactive} = Vue;
+        createApp({
+            setup(){
+                const weatherList = reactive([]);
+                const getList=()=>{
+                    console.log("날씨목록 가져오기");
+                    $.ajax({
+                        url:"http://localhost:8888/weather",
+                        method:"GET",
+                        dataType:"json",
+                        success:(result, status, xhr)=>{
+                            console.log(result);
+                            weatherList.splice(0);
+                            result.response.body.items.item.forEach((weather)=>{
+                                weatherList.push(weather);
+                            })
+                        },
+                        error:(xhr, status, err)=>{
+                            console.log(err);
+                            
+                        }
+                    })
+                }
+
+                getList();
+                return {weatherList, getList}
+            }
+        }).mount("#app")
+    </script>
+</body>
+</html>

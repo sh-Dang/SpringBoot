@@ -18,12 +18,12 @@
                 <th>장르</th>
                 <th>평점</th>
             </tr>
-            <tr>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
+            <tr v-for="movie in movieList">
+                <td>{{movie.title}}</td>
+                <td>{{movie.director}}</td>
+                <td>{{movie.year}}</td>
+                <td>{{movie.genre}}</td>
+                <td>{{movie.rating}}</td>
             </tr>
         </table>
     </div>
@@ -33,10 +33,22 @@
             setup(){
                 const movieList = reactive([]);
                 const getMovieList=()=>{
-                    console.log("영화 목록 가져오기");
-                    
+                    $.ajax({
+                        url:"http://localhost:7777/movies",
+                        method:"GET",
+                        dataType:"JSON",
+                        success:(result, status, xhr)=>{
+                            console.log("영화 목록 가져오기",result);
+                            movieList.splice(0);
+                            result.forEach((movie)=> {
+                                movieList.push(movie);
+                            });
+                        },
+                        error:(xhr, status, err)=>{
+                            console.log("가져오는데 실패했습니다.");
+                        }
+                    })
                 }
-
                 getMovieList();
                 return {movieList, getMovieList}
             }

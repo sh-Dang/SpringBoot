@@ -16,7 +16,7 @@
             <th>hit</th>
         </tr>
         <tr th:each="board : ${boardList}">
-            <td>1</td>
+            <td th:text="${board.board_id}"></td>
             <td th:text="${board.title}"></td>
             <td th:text="${board.writer}"></td>
             <td th:text="${board.regdate}"></td>
@@ -24,5 +24,6 @@
         </tr>
         </thead>
     </table>
+    <div th:replace="~{fragments/footer :: footer}"></div>
 </body>
 </html>

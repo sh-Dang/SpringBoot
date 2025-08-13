@@ -4,7 +4,7 @@
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.sinse.xmlapp.model.board.BoardMapper"><!--인터페이스로 가기로 했다..!-->
 
-    <select id="selectAll" resultType="java.util.List">
+    <select id="selectAll" resultType="Board">
         select * from board
     </select>
 

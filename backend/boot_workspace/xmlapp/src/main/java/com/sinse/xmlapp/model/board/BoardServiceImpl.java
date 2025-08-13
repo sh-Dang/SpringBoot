@@ -9,7 +9,7 @@ import java.util.List;
 public class BoardServiceImpl implements BoardService {
     private BoardDAO boardDAO;
 
-    public void BoardServiceImpl(BoardDAO boardDAO) {
+    public BoardServiceImpl(BoardDAO boardDAO) {
         this.boardDAO = boardDAO;
     }
 
