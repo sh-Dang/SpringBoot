@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>버스 정류소 지도</title>
+  <link rel="stylesheet" href="../css/bus.css">
+  <style>
+    #map {
+      height: 500px;
+      width: 100%;
+      margin-bottom: 20px;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: center;
+    }
+  </style>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+<body>
+  <div id="app">
+    <h3>버스 정류소 지도</h3>
+    <div id="map"></div>
+
+    <table>
+        <tr>
+        <th>정류소 ID</th>
+        <th>정류소 이름</th>
+        <th>ARS</th>
+        <th>위도</th>
+        <th>경도</th>
+        <th>정류소 종류</th>
+        </tr>
+        <tr 
+            v-for="station in getChart" 
+            :key="station.bstopid"
+            @click="focusStation(station)" 
+            style="cursor: pointer;"
+        >
+        <td>{{station.bstopid}}</td>
+        <td>{{station.bstopnm}}</td>
+        <td>{{station.arsno}}</td>
+        <td>{{station.gpsx}}</td>
+        <td>{{station.gpsy}}</td>
+        <td>{{station.stoptype}}</td>
+      </tr>
+    </table>
+  </div>
+
+  <script>
+    const { createApp, reactive } = Vue;
+    let map; // 구글맵 객체
+    let markers = []; // 마커 목록
+
+    createApp({
+      setup() {
+        const busList = reactive([]);
+        const getChart = reactive([]);
+        const getChartList = ()=>{
+            $.ajax({
+                url:"http://localhost:8888/buses",
+                method:"GET",
+                dataType:"JSON",
+                success:(result) =>{
+                    console.log("테이블에 정보뿌리기");
+                    getChart.splice(0);
+                    result.forEach((item)=>{
+                        getChart.push(item);
+                    })
+                }
+            })
+        }
+        const focusStation = (station) => {
+            const lat = parseFloat(station.gpsy);
+            console.log(lat);
+            
+            const lng = parseFloat(station.gpsx);
+            console.log(lng);
+            
+            if (!isNaN(lat) && !isNaN(lng)) {
+                // 지도 중심 이동
+                map.setCenter({ lat, lng });
+                map.setZoom(18);
+
+                // 기존 마커 지우고 새 마커 추가
+                markers.forEach(m => m.setMap(null));
+                markers = [];
+
+                const marker = new google.maps.Marker({
+                    position: { lat, lng },
+                    map: map,
+                    title: station.bstopnm
+                });
+                markers.push(marker);
+            }
+        };
+
+        
+        const getBusList = () => {
+          $.ajax({
+            url: "http://localhost:8888/bus/location",
+            method: "GET",
+            dataType: "JSON",
+            success: (result) => {
+              console.log("정류소 목록 가져오기", result);
+              busList.splice(0);
+              markers.forEach(m => m.setMap(null)); // 기존 마커 삭제
+              markers = [];
+
+              result.forEach((station) => {
+                busList.push(station);
+
+                // 위도, 경도 숫자 변환
+                const lat = parseFloat(station.gpsx);
+                const lng = parseFloat(station.gpsy);
+                if (!isNaN(lat) && !isNaN(lng)) {
+                  const marker = new google.maps.Marker({
+                    position: { lat, lng },
+                    map: map,
+                    title: station.bstopnm
+                  });
+                  markers.push(marker);
+                }
+              });
+            },
+            error: () => {
+              console.log("가져오는데 실패했습니다.");
+            }
+          });
+        };
+
+        // 구글맵 초기화 (Vue 안에서 실행)
+        window.initMap = () => {
+          map = new google.maps.Map(document.getElementById("map"), {
+            zoom: 16,
+            center: { lat: 35.114063, lng: 129.031562 }, // 초기 좌표
+          });
+          getChartList();
+          getBusList();
+        };
+
+        return { busList, getBusList, getChart, getChartList, focusStation};
+      }
+    }).mount("#app");
+  </script>
+
+  <!-- 구글맵 API 키 적용 -->
+  <script async
+    src="https://maps.googleapis.com/maps/api/js?key=MY_SERVICE_KEY&callback=initMap">
+  </script>
+</body>
+</html>
