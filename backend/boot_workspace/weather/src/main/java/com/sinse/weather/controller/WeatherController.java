@@ -15,7 +15,7 @@ public class WeatherController {
     }
 
     @GetMapping("/weather")
-    public String getWeather() throws IOException {
+    public ApiResponse getWeather() throws IOException, InterruptedException {
         return weatherService.getWeather();
     }
 }

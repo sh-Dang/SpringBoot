@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mini Chat UI 300x400</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <link rel="stylesheet" href="../css/chatclient.css">
+</head>
+<body>
+  <div id="app">
+    <div class="toolbar">
+      <input type="button" value="접속" @click="connect()" class="btn connect" />
+      <input type="button" value="연결 종료" class="btn close" @click="disconnect()"/>
+    </div>
+
+    <textarea id="content" placeholder="여기에 메시지가 표시됩니다" ref="area" v-model="log"></textarea>
+
+    <div class="input-row">
+      <input type="text" class="msg-input" placeholder="메시지 입력하세요" v-model="text" @keyup.enter="sendMsg()"/>
+      <button class="send-btn" @click="sendMsg()">보내기</button>
+    </div>
+  </div>
+<script>
+    const{ref, createApp, reactive} = Vue;
+    createApp({
+        setup(){
+            //웹 소켓 서버접속
+            //모든 브라우저에는 표준으로 웹소켓이 지원
+            //별도의 라이브러리 설치가 필요없음
+            let ws = null;
+            const log = ref("");//바인딩 변수
+            let area = ref(null);//testarea를 제어하기 위한 바인딩 변수
+            let text = ref("");//input type=text의 값을 가져오기 위한 바인딩 변수
+
+            //로그 기록
+            const appendLog=(msg)=>{
+                log.value += msg+"\n";//그냥 대입시 바인딩 사라짐
+            }
+            
+            //접속 메서드 정의
+            const connect=()=>{
+                ws = new WebSocket("ws://localhost:7777/ws/echo");
+                ws.onopen=()=>{
+                    appendLog("Open : 서버 접속 성공");
+                }
+                ws.onmessage=(e)=>{
+                    appendLog(e.data);
+                }
+            }
+
+            //메시지 전송
+            const sendMsg=()=>{
+                ws.send(text.value);//웹 소켓을 통해 메시지 전송
+                text.value="";//입력 초기화
+            }
+
+            const disconnect=()=>{
+                if(ws && ws.readyState==WebSocket.OPEN){//이미 연결이 존재할 때만 끊기
+                    //웹소켓에서 1000은 정상종료를 의미
+                    //서버에게 정상적인 접속종료 요청임을 알려주기 위함
+                    ws.close(1000, "사용자 요청에 의한 접속 종료");
+                    appendLog("접속종료");
+                }else{
+                    appendLog("현재 서버에 연결되어 있지 않습니다.");
+                    appendLog("접속중이 아닙니다.");
+                }
+                area.value.style.backgroundColor="";                    
+            }
+            return{area, log, text, connect, sendMsg, disconnect}
+        }
+    }).mount("#app")
+</script>
+
+</body>
+</html>
