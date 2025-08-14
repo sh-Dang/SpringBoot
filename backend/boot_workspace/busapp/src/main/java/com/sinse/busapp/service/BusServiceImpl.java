@@ -1,44 +1,54 @@
 package com.sinse.busapp.service;
 
+import com.sinse.busapp.domain.Item;
+import com.sinse.busapp.domain.StationLocation;
+import com.sinse.busapp.model.bus.BusHandler;
+import com.sinse.busapp.model.bus.BusParser;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.xml.sax.InputSource;
 
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
 
-public class BusServiceImpl {
+@Slf4j
+@Service
+public class BusServiceImpl implements BusService {
 
-    private String serviceKey = "Z6ICGnUIfZtfFB81Jzn2wQx4h%2Fq3Bf38pKyTOgy%2F623OQQCc3NbKiQcYEntLqp8SfbT8rmcvjn%2Bp3v%2FOKUYoHA%3D%3D";
-    @GetMapping("/buses")
-    public String getStation() throws IOException {
-        StringBuilder urlBuilder = new StringBuilder("http://apis.data.go.kr/6260000/BusanBIMS/busStopList"); /*URL*/
-        urlBuilder.append("?" + URLEncoder.encode("serviceKey","UTF-8") + "="+ serviceKey); /*Service Key*/
-        urlBuilder.append("&" + URLEncoder.encode("pageNo","UTF-8") + "=" + URLEncoder.encode("1", "UTF-8")); /*페이지번호*/
-        urlBuilder.append("&" + URLEncoder.encode("numOfRows","UTF-8") + "=" + URLEncoder.encode("10", "UTF-8")); /*한 페이지 결과 수*/
-//        urlBuilder.append("&" + URLEncoder.encode("bstopnm","UTF-8") + "=" + URLEncoder.encode("부산시청", "UTF-8")); /*정류소 명*/
-//        urlBuilder.append("&" + URLEncoder.encode("arsno","UTF-8") + "=" + URLEncoder.encode("13708", "UTF-8")); /*정류소 번호*/
-        URL url = new URL(urlBuilder.toString());
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setRequestMethod("GET");
-        conn.setRequestProperty("Content-type", "application/json");
-        System.out.println("Response code: " + conn.getResponseCode());
-        BufferedReader rd;
-        if(conn.getResponseCode() >= 200 && conn.getResponseCode() <= 300) {
-            rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-        } else {
-            rd = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
+    private BusParser busParser;
+    private BusHandler busHandler;
+    public BusServiceImpl(BusParser busParser, BusHandler busHandler) {
+        this.busParser = busParser;
+        this.busHandler = busHandler;
+    }
+
+    public List<StationLocation> getStation() throws IOException {
+        List<Item> station = busHandler.getItemList();
+        List<StationLocation> stationLocationList = new ArrayList<>();
+        log.debug("");
+        log.debug(station.toString());
+        for(int i = 0; i < station.size(); i++) {
+            Item item = station.get(i);
+            log.debug(String.valueOf(item.getGpsx()));
+            log.debug(String.valueOf(item.getGpsy()));
+            stationLocationList.add(new StationLocation(item.getGpsx(), item.getGpsy()));
         }
-        StringBuilder sb = new StringBuilder();
-        String line;
-        while ((line = rd.readLine()) != null) {
-            sb.append(line);
-        }
-        rd.close();
-        conn.disconnect();
-        System.out.println(sb.toString());
-        return sb.toString();
+        log.debug(stationLocationList.toString());
+        return stationLocationList;
+    }
+
+    @Override
+    public List<Item> parse(String data) throws Exception{
+        return busParser.parse(data);
     }
 }
