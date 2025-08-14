@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        input[type=text], select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            margin-top: 6px;
+            margin-bottom: 16px;
+            resize: vertical;
+        }
+
+        input[type=submit] {
+            background-color: #04AA6D;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        input[type=submit]:hover {
+            background-color: #45a049;
+        }
+
+        .container {
+            border-radius: 5px;
+            background-color: #f2f2f2;
+            padding: 20px;
+        }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+</head>
+<body>
+
+<h3>Contact Form</h3>
+
+<div class="container">
+    <form>
+        <input type="text" id="fname" name="title" placeholder="Your name..">
+        <input type="text" id="lname" name="writer" placeholder="Your last name..">
+        <textarea id="subject" name="content" placeholder="Write something.." style="height:200px"></textarea>
+        <input type="button" value="글 등록">
+    </form>
+</div>
+<script>
+    function register(){
+        //폼 전송
+        $("form").attr({
+            action:"/board/register",
+            method:"post"
+        });
+        $("form").submit();
+    }
+    $(()=>{
+        $("input[type='button']").click(()=>{
+            register();
+        })
+    });
+</script>
+</body>
+</html>

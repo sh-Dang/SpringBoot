@@ -1,0 +1,77 @@
+/* bus.css */
+
+/* 전체 배경과 기본 글꼴 스타일 */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f6f9;
+    margin: 0;
+    padding: 20px;
+}
+
+/* 테이블 스타일 */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #ffffff;
+    box-shadow: 0px 2px 6px rgba(0,0,0,0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* 헤더 스타일 */
+th {
+    background-color: #1976d2;
+    color: white;
+    padding: 12px 15px;
+    text-align: center;
+    font-weight: 600;
+}
+
+/* 데이터 셀 스타일 */
+td {
+    padding: 12px 15px;
+    text-align: center;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+/* 짝수 행 배경색 */
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+/* 마우스 오버 시 행 강조 */
+tr:hover {
+    background-color: #e3f2fd;
+    transition: background-color 0.2s ease-in-out;
+}
+
+/* 반응형 (모바일) 스타일 */
+@media (max-width: 600px) {
+    table, thead, tbody, th, td, tr {
+        display: block;
+    }
+    th {
+        position: sticky;
+        top: 0;
+        background-color: #1565c0;
+    }
+    tr {
+        margin-bottom: 15px;
+    }
+    td {
+        text-align: right;
+        padding-left: 50%;
+        position: relative;
+    }
+    td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 15px;
+        width: 45%;
+        padding-right: 10px;
+        white-space: nowrap;
+        text-align: left;
+        font-weight: bold;
+        color: #555;
+    }
+}
