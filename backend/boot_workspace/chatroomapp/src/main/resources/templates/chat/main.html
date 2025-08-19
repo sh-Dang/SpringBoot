@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="/css/main.css">
+    <title>Document</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+</head>
+<body>
+<div id="app">
+    <div id="wrapper">
+        <!-- 왼쪽 aside -->
+        <div id="aside">
+            <div th:if="${session.member != null}">
+                <h4 th:text="${session.member.Id+'님'}"></h4>
+                <h4 th:text="|${session.member.Name}님|"></h4>
+            </div>
+            <input type="hidden" th:value="${session.member.Id}" name="id">
+            <input type="text" placeholder="방 제목 입력" name="roomName">
+            <input type="button" value="직접 방송하기" @click="createRoom()">
+
+            <ul>
+                <li>접속자 목록</li>
+                <li v-for="member in memberList">{{member.id}}</li>
+            </ul>
+        </div>
+
+        <!--방송 방이 보여질 오른쪽 content 영역 v-for문 사용할 것임-->
+        <div id="content">
+            <div class="room">
+                <div class="room_header">방송제목</div>
+                <div class="room_body"></div>
+            </div>
+            <div class="room" v-for="room in roomList">
+                <div class="room_header">방송제목</div>
+                <div class="room_body"></div>
+            </div>
+        </div>
+
+        <!-- 팝업시작 -->
+        <div id="pop" v-show="false"><!--논리값을 flag으로 뒤집자..!-->
+            <div id="content2">
+                <div id="content_header">방제목</div>
+                <div id="content_body">채팅로그</div>
+            </div>
+            <div id="aside2">
+                <div id="aside_header">나</div>
+                <div id="aside_body">참여자</div>
+                <div id="aside_footer">
+                    <input type="button" value="나가기">
+                </div>
+            </div>
+            <div id="footer">
+                <textarea></textarea>
+            </div>
+        </div>
+        <!-- 팝업 끝 -->
+    </div>
+</div>
+<script>
+    const {createApp, ref, reactive} = Vue;
+    createApp({
+        setup(){
+            let roomList=reactive([]);
+            let memberList=reactive([]);
+            //웹 소켓 객체 선언
+            let ws = null;
+
+            //서버에 요청하는 메서드
+            const request=(data)=>{
+                ws.send(data);
+            }
+
+            //접속요청(웹소켓에)
+            const connect=()=>{
+                ws = new WebSocket("ws://localhost:9999/chat/multi");
+                //접속 성공시
+                ws.onopen=(event)=>{
+                    console.log("온오픈")
+                }
+                //메시지가 수신 되면
+                ws.onmessage = (e)=>{
+                    console.log("접속과 동시에 수신받은 데이터 는", e.data);
+
+                    /*파싱하는 이유 : 데이터를 객체 취급하여 .찍고 접근하기 위함*/
+                    const responseJson = JSON.parse(e.data);
+                    if(responseJson.responseType == "createRoom"){
+                        memberList.splice(0);
+                        //(원래)접속자, (지금은)채팅방 목록도 채우기
+                        responseJson.memberList.forEach(member=>{
+                           memberList.push(member);
+                        });
+                        if(responseJson.roomList != null) {
+                            responseJson.roomList.forEach(room => {
+                                roomList.push(room);
+                            });
+                        }
+                    }
+                };
+            }
+            //방 만들기 요청
+            /*
+            *   {
+            *       requestType="createRoom",
+            *       userId="luige",
+            *       roomName="삼성중앙벙개"
+            *   }
+            *
+            * */
+            const createRoom=()=>{
+                let payload={
+                    requestType:"createRoom",
+                    userId:$("input[name='id']").val(),
+                    roomName:$("input[name='roomName']").val()
+                }
+                console.log(payload);
+                request(JSON.stringify(payload));
+            }
+            connect();
+            return{memberList, roomList, ws, createRoom, request, connect}
+        }
+
+    }).mount("#app")
+</script>
+</body>
+</html>

@@ -9,9 +9,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.HashMap;
-import java.util.Map;
-
 @Controller
 @Slf4j
 public class MemberController {
@@ -30,9 +27,12 @@ public class MemberController {
     @ResponseBody
     public String loginCheck(String id, String password, HttpSession session){
         String result = "";
-        Member loginUser = memberService.loginCheck(id, password);
-        if(loginUser!=null) {
-            session.setAttribute("loginUser",loginUser);
+        Member member = memberService.loginCheck(id, password);
+        if(member!=null) {
+            session.setAttribute("member",member);
+            //세션 테스트용(주석으로 변환)
+//            Member user = (Member)session.getAttribute("loginUser");
+//            log.debug(user.getName());
             result = "success";
         }else{
             result = "failed";
@@ -41,8 +41,28 @@ public class MemberController {
     }
 
     @GetMapping("/member/chat")
-    public String chat(){
-        return "member/chat";
+    public String chat(HttpSession session){
+        log.debug(session.getAttribute("member").toString());
+//        String targetString = "";
+//        if(session.getAttribute("loginUser")==null){
+//            targetString = "member/loginform";
+//        }else if(session.getAttribute("loginUser")!=null){
+//            targetString = "chat/main";
+//        }
+//        return targetString;
+/* =======================================================
+        String targetString = "chat/main";
+        if(session.getAttribute("loginUser")==null){
+            targetString = "member/loginform";
+        }
+        return targetString;
+ =========================================================*/
+        return (session.getAttribute("member")==null) ? "member/loginform" : "chat/main";
     }
 
+    @GetMapping("/chat/room")
+    public String room(HttpSession session){
+        log.debug("이것입니다."+session.getAttribute("member").toString());
+        return (session.getAttribute("member")==null) ? "member/loginform" : "room/room";
+    }
 }

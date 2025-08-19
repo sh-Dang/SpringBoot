@@ -1,0 +1,203 @@
+#wrapper{
+    width: 1200px;
+    height: 800px;
+    display: flex;
+    border: 2px solid #d3d3d3; /* 연한 회색 테두리 */
+    margin: 20px auto;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05); /* 부드러운 그림자 */
+    border-radius: 10px;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+}
+
+/* 왼쪽 aside */
+#aside{
+    width: 300px;
+    height: 100%;
+    background-color: #a9a9a9; /* 다크 그레이 */
+    padding: 20px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+#aside #title{
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+    color: #f5f5f5; /* 밝은 회색 */
+}
+
+#aside input[type="button"]{
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #e0e0e0; /* 연한 회색 버튼 */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+    color: #333;
+}
+
+#aside input[type="button"]:hover{
+    background-color: #d0d0d0; /* 호버 시 살짝 어두운 회색 */
+}
+
+/* 오른쪽 content */
+#content{
+    width: 900px;
+    height: 100%;
+    background-color: #f0f0f0; /* 부드러운 연회색 */
+    padding: 20px;
+    box-sizing: border-box;
+    overflow-y: auto;
+}
+
+/* 방송 방(room) */
+.room{
+    width: 200px;
+    background-color: #ffffff; /* 흰색으로 콘텐츠 구분 */
+    border-radius: 10px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1); /* 약간 연한 그림자 */
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 300px;
+}
+
+.room_header{
+    background-color: #888888; /* 중간 톤 회색 */
+    color: #f5f5f5;
+    padding: 15px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.room_body{
+    flex: 1;
+    padding: 15px;
+    background-color: #f9f9f9; /* 연회색 */
+    overflow-y: auto;
+}
+
+/*****************************************************************************/
+/* 기본 변수 */
+:root{
+    --bg: #f7f7fb;
+    --card: #ffffff;
+    --text: #222;
+    --muted: #6b7280;
+    --brand: #4f46e5;
+    --border: #e5e7eb;
+    --shadow: 0 8px 24px rgba(0,0,0,0.08);
+}
+/* 레이아웃 */
+#pop{
+    width:min(1100px, 92vw);
+    height:88vh;
+    margin:24px auto;
+    display:grid;
+    grid-template-columns: 1fr 320px;
+    grid-template-rows: 1fr auto; /* 상단(콘텐츠/사이드) + 하단(푸터) */
+    gap:16px;
+}
+
+/* 카드 공통 */
+#content2, #aside2, #footer{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:14px;
+    box-shadow:var(--shadow);
+}
+
+/* 콘텐츠 영역 */
+#content2{
+    grid-column:1;
+    grid-row:1;
+    display:flex;
+    flex-direction:column;
+    min-width:0; /* 스크롤 수축 대응 */
+}
+#content_header{
+    padding:16px 18px;
+    border-bottom:1px solid var(--border);
+    font-weight:700;
+    font-size:18px;
+}
+#content_body{
+    flex:1;
+    padding:16px 18px;
+    overflow:auto;                 /* 채팅 로그 스크롤 */
+    line-height:1.5;
+}
+
+/* 사이드바 */
+#aside2{
+    grid-column:2;
+    grid-row:1;
+    display:flex;
+    flex-direction:column;
+    min-height:0;
+}
+#aside_header{
+    padding:14px 16px;
+    border-bottom:1px solid var(--border);
+    font-weight:600;
+}
+#aside_body{
+    flex:1;
+    padding:10px 14px;
+    overflow:auto;                 /* 참여자 목록 스크롤 */
+}
+#aside_footer{
+    padding:12px 14px;
+    border-top:1px solid var(--border);
+    display:flex;
+    justify-content:flex-end;
+    gap:8px;
+}
+#aside_footer input[type="button"]{
+    appearance:none;
+    border:1px solid var(--border);
+    background:#fff;
+    padding:10px 14px;
+    border-radius:10px;
+    cursor:pointer;
+    font-weight:600;
+    transition:transform .06s ease, box-shadow .2s ease, border-color .2s ease, background-color .2s ease;
+}
+#aside_footer input[type="button"]:hover{
+    border-color:var(--brand);
+    box-shadow:0 6px 16px rgba(79,70,229,.18);
+}
+#aside_footer input[type="button"]:active{
+    transform:translateY(1px);
+}
+
+/* 하단 입력창 */
+#footer{
+    grid-column:1 / span 2;  /* 전체 가로 폭 차지 */
+    grid-row:2;
+    padding:12px;
+    display:flex;
+    align-items:flex-end;
+    gap:12px;
+}
+#footer textarea{
+    width:100%;
+    height:88px;
+    resize:vertical;
+    padding:12px 14px;
+    border:1px solid var(--border);
+    border-radius:12px;
+    font:inherit;
+    line-height:1.4;
+    outline:none;
+    transition:border-color .2s ease, box-shadow .2s ease;
+}
+#footer textarea:focus{
+    border-color:var(--brand);
+    box-shadow:0 0 0 3px rgba(79,70,229,.15);
+}

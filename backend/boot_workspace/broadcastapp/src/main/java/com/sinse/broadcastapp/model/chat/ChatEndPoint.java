@@ -45,7 +45,7 @@ public class ChatEndPoint {
 
         //서버에서 사용할 Set에 채우기
         userList.add(session);
-
+        log.debug("프로토콜버전"+session.getProtocolVersion());
 //        접속과 동시에 클라이언트에게 서버의 접속자 명단을 전송
 //        User user = new User();
 //        user.setId(session.getId());
