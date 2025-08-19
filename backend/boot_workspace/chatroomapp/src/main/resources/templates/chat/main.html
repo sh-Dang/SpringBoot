@@ -39,10 +39,11 @@
                 <div class="room_header">방송제목</div>
                 <div class="room_body"></div>
             </div>
+            <input type="button" @click="flagReverse()" value="끄기~">
         </div>
 
         <!-- 팝업시작 -->
-        <div id="pop" v-show="false"><!--논리값을 flag으로 뒤집자..!-->
+        <div id="pop" v-show="isInTheRoom"><!--논리값을 flag으로 뒤집자..!-->
             <div id="content2">
                 <div id="content_header">방제목</div>
                 <div id="content_body">채팅로그</div>
@@ -67,9 +68,13 @@
         setup(){
             let roomList=reactive([]);
             let memberList=reactive([]);
+            let isInTheRoom=ref(false);
+            //뒤집는 방법 => isInTheRoom.value = !isInTheRoom.value로 반대값 할당해주면 됨..!(아마 x 누르면 생기는 로직 구현할 거같음)
             //웹 소켓 객체 선언
             let ws = null;
-
+            const flagReverse=()=>{
+                isInTheRoom.value = !isInTheRoom.value;
+            }
             //서버에 요청하는 메서드
             const request=(data)=>{
                 ws.send(data);
@@ -121,7 +126,7 @@
                 request(JSON.stringify(payload));
             }
             connect();
-            return{memberList, roomList, ws, createRoom, request, connect}
+            return{memberList, roomList, ws, isInTheRoom, createRoom, request, connect, flagReverse}
         }
 
     }).mount("#app")
