@@ -1,0 +1,17 @@
+1. javaEE api
+2. spring 지원 web socket api
+	- bootwebsocket
+3. STOMP 표준 - 데이터를 주고받을 때 표준을 제시해줌
+		- 구독기능(sub/pub)
+	- bootstomp
+
+========================================
+
+spring ---리눅스, docker
+spring mas, spring security
+-->라이브 커머스 쇼핑몰, react
+
+{
+  type:""
+  []
+}

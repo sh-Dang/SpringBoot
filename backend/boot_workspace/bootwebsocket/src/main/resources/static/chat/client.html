@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+<!-- Vue -->
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+<!-- JQuery -->
+<script src="jquery-3.7.1.min.js"></script>
+</head>
+<body>
+    <div id="app">
+        <h2>Spring WebSocket 기반 채팅</h2>
+
+        <!-- DB연동 하지않고, 사용자를 직접 입력하여 채팅 진행 -->
+        <div v-if="!isConnected">
+            <input type="text" v-model="username" placeholder="채팅 사용자명 입력">
+            <input type="button" value="웹 소켓 서버 접속" @click="connect()">
+        </div>
+        <div v-else>
+            <p><b>{{username}}님</b> 접속 중</p>
+            <input type="button" value="연결 끊기" @click="disconnect()">
+            <div>
+                <input type="text" @keyup.enter="sendMessage()" placeholder="메시지를 입력하세요" v-model="message">
+                <input type="button" @click="sendMessage()" value="메시지 전송">
+            </div>
+        </div>
+        <h3>총 접속자 : {{users.length}}</h3>
+        <ul>
+            <li v-for="user in users">{{user}}</li>
+        </ul>
+
+    </div>
+
+
+<script>
+    const {createApp, ref} = Vue;
+    createApp({
+        setup(){
+            const isConnected = ref(false); //접속 플래그
+            const username = ref(""); //사용자명 바인딩 변수
+            const message = ref(""); //보내는 메시지
+            const users = ref([]); //전체 접속자 목록
+            let socket = null;
+            /*==================================================
+                서버에 접속
+            ==================================================*/
+            const connect = ()=>{
+                if(!username.value.trim()){
+                    alert("이름을 입력하세요");
+                    return;
+                }
+                //서버와 WebSocket연결시도
+                socket = new WebSocket("ws://localhost:9999/ws");
+
+                socket.onopen =()=>{
+                    console.log("접속에 성공했습니다**onopen()")
+                    isConnected.value = !isConnected.value;
+                    //서버에 본인이 접속했음을 알리기
+                    send({
+                        type:"CONNECT", //요청타입
+                        sender:username.value //보낸사람
+                    })
+                }
+                //서버로부터 메시지를 받을 때 실행되는 콜백
+                socket.onmessage = (e)=>{
+                    console.log("서버가 보낸 메시지", e.data);
+                    let json = JSON.parse(e.data);
+                    if(json.destination=="/users"){//서버가 보낸 정보가 유저 목록임을 알 수 있다
+                        users.value=json.body;
+                    }
+                }
+            }
+            /*==================================================
+                채팅 메시지 Stringify
+            ==================================================*/
+            const send = (payload)=>{
+                socket.send(JSON.stringify(payload));
+            }
+            /*==================================================
+                채팅 메시지 보내기
+            ==================================================*/
+            const sendMessage = ()=>{
+                console.log("사용중인 소켓은" + socket)
+                //메시지가 비어있지 않을 경우만, 서버에 전송
+                if(message.value.trim()){
+                    send({
+                        type:"MESSAGE",
+                        sender:username.value,
+                        content:message.value
+                    });
+                    message.value = ""; //입력값 초기화
+                }
+            }
+
+            /*==================================================
+                접속해제
+            ==================================================*/
+            const disconnect =()=>{
+                isConnected.value = !isConnected.value;
+                //서버에 본인 접속이 끊어짐을 알려야 함
+                send({
+                    type:"DISCONNECT",
+                    sender:username.value
+                });
+
+                socket.close();
+                //소켓이 닫힌 상태에서는 브로드캐스팅 대상이 아니기 때문에
+                //현재 접속자 목록에서 나를 수동으로 제거한다.
+                let newUsers=[];
+                //최종적으로 만들어진 배열을 다시 대입해서 넣으면 끝
+            }
+            return{isConnected, username, message, users, connect, disconnect, sendMessage}
+        }
+    }).mount("#app")
+
+</script>
+</body>
+</html>
