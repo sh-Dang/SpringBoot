@@ -1,0 +1,7 @@
+방 들어가기 요청
+requestType:"enterRoom",
+UUID:"어떤 방"
+
+채팅 요청
+requestType:"chat",
+UUID:"어떤 방",

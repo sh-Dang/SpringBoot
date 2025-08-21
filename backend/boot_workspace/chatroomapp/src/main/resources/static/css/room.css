@@ -1,0 +1,118 @@
+/* 기본 변수 */
+:root{
+    --bg: #f7f7fb;
+    --card: #ffffff;
+    --text: #222;
+    --muted: #6b7280;
+    --brand: #4f46e5;
+    --border: #e5e7eb;
+    --shadow: 0 8px 24px rgba(0,0,0,0.08);
+}
+/* 레이아웃 */
+#pop{
+    width:min(1100px, 92vw);
+    height:88vh;
+    margin:24px auto;
+    display:grid;
+    grid-template-columns: 1fr 320px;
+    grid-template-rows: 1fr auto; /* 상단(콘텐츠/사이드) + 하단(푸터) */
+    gap:16px;
+}
+
+/* 카드 공통 */
+#content2, #aside2, #footer{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:14px;
+    box-shadow:var(--shadow);
+}
+
+/* 콘텐츠 영역 */
+#content2{
+    grid-column:1;
+    grid-row:1;
+    display:flex;
+    flex-direction:column;
+    min-width:0; /* 스크롤 수축 대응 */
+}
+#content_header{
+    padding:16px 18px;
+    border-bottom:1px solid var(--border);
+    font-weight:700;
+    font-size:18px;
+}
+#content_body{
+    flex:1;
+    padding:16px 18px;
+    overflow:auto;                 /* 채팅 로그 스크롤 */
+    line-height:1.5;
+}
+
+/* 사이드바 */
+#aside2{
+    grid-column:2;
+    grid-row:1;
+    display:flex;
+    flex-direction:column;
+    min-height:0;
+}
+#aside_header{
+    padding:14px 16px;
+    border-bottom:1px solid var(--border);
+    font-weight:600;
+}
+#aside_body{
+    flex:1;
+    padding:10px 14px;
+    overflow:auto;                 /* 참여자 목록 스크롤 */
+}
+#aside_footer{
+    padding:12px 14px;
+    border-top:1px solid var(--border);
+    display:flex;
+    justify-content:flex-end;
+    gap:8px;
+}
+#aside_footer input[type="button"]{
+    appearance:none;
+    border:1px solid var(--border);
+    background:#fff;
+    padding:10px 14px;
+    border-radius:10px;
+    cursor:pointer;
+    font-weight:600;
+    transition:transform .06s ease, box-shadow .2s ease, border-color .2s ease, background-color .2s ease;
+}
+#aside_footer input[type="button"]:hover{
+    border-color:var(--brand);
+    box-shadow:0 6px 16px rgba(79,70,229,.18);
+}
+#aside_footer input[type="button"]:active{
+    transform:translateY(1px);
+}
+
+/* 하단 입력창 */
+#footer{
+    grid-column:1 / span 2;  /* 전체 가로 폭 차지 */
+    grid-row:2;
+    padding:12px;
+    display:flex;
+    align-items:flex-end;
+    gap:12px;
+}
+#footer textarea{
+    width:100%;
+    height:88px;
+    resize:vertical;
+    padding:12px 14px;
+    border:1px solid var(--border);
+    border-radius:12px;
+    font:inherit;
+    line-height:1.4;
+    outline:none;
+    transition:border-color .2s ease, box-shadow .2s ease;
+}
+#footer textarea:focus{
+    border-color:var(--brand);
+    box-shadow:0 0 0 3px rgba(79,70,229,.15);
+}
