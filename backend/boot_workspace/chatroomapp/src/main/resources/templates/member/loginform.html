@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>채팅을 위한 로그인</title>
+    <link rel="stylesheet" href="/css/loginform.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+</head>
+<body>
+    <div class="login-container">
+        <h2>로그인</h2>
+        <form action="/member/login" method="post">
+            <label><b>UserId</b></label>
+            <input type="text" placeholder="아이디를 입력하세요" name="id" required>
+
+            <label><b>Password</b></label>
+            <input type="password" placeholder="비밀번호를 입력하세요" name="password" required>
+
+            <button type="button">Login</button>
+
+            <div class="options">
+                <label>
+                    <input type="checkbox" checked="checked" name="remember"> Remember me
+                </label>
+                <a href="#">비밀번호를 잊으셨나요?</a>
+            </div>
+        </form>
+    </div>
+<script>
+    $('button').click(function() {
+        $.ajax({
+            url: "/member/login",
+            method: "POST",
+            data: {
+                id: $("input[name='id']").val(),
+                password: $("input[name='password']").val()
+            },
+            success: function (result, status, xhr) {
+                console.log("성공입니다."+result);
+                if(result==="success"){
+                    window.location.href="/member/chat";
+                }else{
+                    console.log("요청을 받는데 성공, 로그인엔 실패")
+                    alert("로그인 정보를 확인해 주세요");
+                }
+            },
+            error: function (xhr, status, err) {
+                console.log("요청을 받는데 실패했습니다.")
+            }
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="/css/main.css">
+    <title>Document</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+</head>
+<body>
+<div id="app">
+    <div id="wrapper">
+        <!-- 왼쪽 aside -->
+        <div id="aside">
+            <div th:if="${session.member != null}">
+                <h4 th:text="${session.member.Id+'님'}"></h4>
+                <h4 th:text="|${session.member.Name}님|"></h4>
+            </div>
+            <input type="hidden" th:value="${session.member.Id}" name="id">
+            <input type="text" placeholder="방 제목 입력" name="roomName">
+            <input type="button" value="직접 방송하기" @click="createRoom()">
+<!--            <input type="button" value="접속 끊기" @click="disconnect()">-->
+
+            <ul>
+                <li>접속자 목록</li>
+                <li v-for="member in memberList">{{member.id}}</li>
+            </ul>
+        </div>
+
+        <!--방송 방이 보여질 오른쪽 content 영역 v-for문 사용할 것임-->
+        <div id="content">
+            <!-- 팝업시작 -->
+            <div id="pop" v-show="isInTheRoom"><!--논리값을 flag으로 뒤집자..!-->
+                <div id="content2">
+                    <div id="content_header">{{master}}의 방 : {{roomName}}</div>
+<!--                    <div id="content_body" v-html="data"></div> //이거는 매핑데이터보다 Vue문법을 더 다양하게 활용한 케이스-->
+                    <div id="content_body" style="white-space: pre-line;">{{data}}</div>
+
+                </div>
+                <div id="aside2">
+                    <div id="aside_header">시청자</div>
+                    <div id="aside_body">
+                        <ul>
+                            <li v-for="user in userList" key="user.id">{{user.id}}</li>
+                        </ul>
+                    </div>
+                    <div id="aside_footer">
+                        <input type="button" @click="flagReverse()" value="나가기">
+                    </div>
+                </div>
+                <div id="footer">
+                    <textarea id="chat" @keyup.enter="sendMessage()" v-model="msg"></textarea>
+                    <input type="button" value="전송" @click="sendMessage()">
+                </div>
+            </div>
+            <!-- 팝업 끝 -->
+
+
+            <!-- 메인 화면 시작 -->
+            <div class="room" v-for="room in roomList" v-show="!isInTheRoom">
+                <div class="room_header"></div>
+                    <a href="" @click.prevent="openForm(room.uuid)">{{room.roomName}}</a>
+                <div class="room_body"></div>
+            </div>
+            <!-- 메인 화면 끝 -->
+        </div>
+
+
+    </div>
+</div>
+<script>
+    const {createApp, ref, reactive} = Vue;
+    createApp({
+        setup(){
+            let roomList=reactive([]); //생성된 방 목록
+            let memberList=reactive([]); //생성된 멤버 목록
+            let isInTheRoom=ref(false); //추가 창 표시 플래그
+            //채팅방 상세 내용 관련
+            let roomName=ref(""); //방 이름
+            let master=ref(""); //방 개설자
+            let userList=reactive([]); //참여자 목록
+            let uuid = ref(""); //방 고유값
+            let msg=ref("");// 전송할 채팅 메시지
+            let data=ref("");// 채팅로그에 사용될 바인딩 변수
+
+            //뒤집는 방법 => isInTheRoom.value = !isInTheRoom.value로 반대값 할당해주면 됨..!(아마 x 누르면 생기는 로직 구현할 거같음)
+            //웹 소켓 객체 선언
+            let ws = null;
+            const flagReverse=()=>{
+                isInTheRoom.value = !isInTheRoom.value;
+            }
+            //서버에 요청하는 메서드
+            const request=(data)=>{
+                ws.send(data);
+            }
+
+            //접속요청(웹소켓에)
+            const connect=()=>{
+                ws = new WebSocket("ws://localhost:9999/chat/multi");
+                //접속 성공시
+                ws.onopen=(event)=>{
+                    console.log("온오픈")
+                }
+                //메시지가 수신 되면
+                ws.onmessage = (e)=>{
+                    console.log("접속과 동시에 수신받은 데이터 는", e.data);
+
+                    /*파싱하는 이유 : 데이터를 객체 취급하여 .찍고 접근하기 위함*/
+                    const responseJson = JSON.parse(e.data);
+                    if(responseJson.responseType == "createRoom"){
+                        memberList.splice(0);
+                        //(원래)접속자, (지금은)채팅방 목록도 채우기
+                        responseJson.memberList.forEach(member=>{
+                           memberList.push(member);
+                        });
+                        if(responseJson.roomList != null) {
+                            roomList.splice(0);//splice안하니까 누적됨...!
+                            responseJson.roomList.forEach(room => {
+                                roomList.push(room);
+                            });
+                        }
+                    }else if(responseJson.responseType == "enterRoom"){
+                        console.log(responseJson);
+                        roomName.value = responseJson.room.roomName;
+                        master.value = responseJson.room.master;
+                        uuid.value = responseJson.room.uuid;
+                        userList.splice(0);
+                        responseJson.room.userList.forEach(user=>{
+                            userList.push(user);
+                        });
+                        // let roomName=ref(""); //방 이름
+                        // let master=ref(""); //방 개설자
+                        // let userList=reactive([]); //참여자 목록
+                        // let uuid = ref(""); //방 고유값
+                    }else if(responseJson.responseType=="sendMessage"){
+                        console.log(responseJson);
+                        let sender = responseJson.sender;
+                        let message = responseJson.data;
+                        let uuid = responseJson.uuid;//쓸지도 모르니 받아 둠
+
+                        // data.value+=sender + "님 : " + message + "<br>"; //v-html을 활용한 케이스
+                    data.value+=sender + "님 : " + message + "\n"; //확실히 이게 더 빠르긴 함
+                    }
+                }
+                ws.onclose=(e)=>{
+                    console.log(e);
+                }
+            }
+            //방 만들기 요청
+            /*
+            *   {
+            *       requestType="createRoom",
+            *       userId="luige",
+            *       roomName="삼성중앙벙개"
+            *   }
+            *
+            * */
+            const createRoom=()=>{
+                let payload={
+                    requestType:"createRoom",
+                    userId:$("input[name='id']").val(),
+                    roomName:$("input[name='roomName']").val()
+                }
+                console.log(payload);
+                request(JSON.stringify(payload));
+            }
+
+            const openForm = (roomId) =>{
+                flagReverse();
+                alert("내가 원하는 방 = " + roomId);
+                let payload={
+                    requestType:"enterRoom",
+                    uuid : roomId
+                }
+                request(JSON.stringify(payload));
+            }
+
+            const sendMessage=()=>{
+                console.log("메시지 보내집니다.")
+                //payload가 아니어도 괜찮아..!
+                let payloadNo={
+                    requestType:"sendMessage",
+                    sender:$("input[name='id']").val(),
+                    data: msg.value,
+                    uuid: uuid.value
+                }
+                request(JSON.stringify(payloadNo));
+                console.log(JSON.stringify(payloadNo))
+                msg.value = "";
+            }
+
+            // const disconnect = () => {
+            //     ws.disconnect;
+            // }
+            connect();
+                return{memberList, roomList, ws, isInTheRoom, roomName, master, userList, uuid, msg, data, createRoom, request, connect, flagReverse, openForm, sendMessage/*, disconnect*/}
+        }
+
+    }).mount("#app")
+</script>
+</body>
+</html>

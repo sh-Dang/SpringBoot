@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+<link rel="stylesheet" href="../css/broadcast.css">
+</head>
+<body>
+    <div id="app">
+        <div id="wrapper">
+            <div id="users">
+                <ul>
+                    <li v-for="id in userList" :key="id">{{id}}</li>
+                </ul>
+            </div>
+            <div id="area">
+                <textarea ref="area" v-model="log"></textarea>
+            </div>
+            <div id="keyinput">
+                <input type="text" v-model="txt" @keyup.enter="sendMsg()">
+            </div>
+            <div id="bttn">
+                <button type="button" @click="connect()">채팅방 들어가기</button>
+                <button>연결 끊기</button>
+            </div>
+        </div>
+    </div>
+    
+
+
+
+<script>
+    const{createApp, ref, reactive}=Vue;
+    createApp({
+        setup(){
+            let ws=ref(null);
+            let area=ref(null);//textarea를 제어하기 위한 변수
+            let log=ref("");
+            let txt=ref("");
+            let userList = reactive(["","","",""]);
+            
+            //서버레 요청하기
+            const request=(msg)=>{
+                ws.send(msg);//서버에 데이터 전송
+            }
+
+            const connect=()=>{
+                ws = new WebSocket("ws://localhost:9999/ws/multi");
+                ws.onopen=()=>{
+                    log.value += "접속함\n";
+                    let msg={};
+                    msg["requestType"]="connect";
+                    request(JSON.stringify(msg));//접속임을 알려줄 수 있는 메시지 전송
+                }
+                ws.onmessage=(e)=>{
+                    console.log("====="+e.data);
+                    let responseJson=JSON.parse(e.data);
+                    console.log(responseJson);
+                    responseJson.requestType;
+                    //1.서버에서 접속자 명단을 보내준 경우
+                    if(responseJson.responseType=="connect"){
+                        log.value+=e.data+"\n";
+                        //e.data가 json문자열 이므로, 객체로 취급되려면 JSON객체로 전환돼야 한다.
+                        console.log("=======접속요청에 대한 응답 받음======");
+                        userList.splice(0);//기존 배열을 비운다
+                        responseJson.data.forEach((user)=>{
+                            userList.push(user);
+                        });
+                        
+                    }else if(responseJson.responseType=="chat"){
+                        //2.채팅을 위한 메시지 전송 후 서버로부터 다시 받게되는 메시지 인 경우
+                        // {
+                        //     "responseType":"chat",
+                        //     "sender" : "세션id",
+                        //     "data":"나 배고파"
+                        // }
+                        
+                        log.value+=responseJson.sender+"의 말 : "+responseJson.data+"\n";
+                    }else if(responseJson.responseType==""){
+                        //3.방 개설을 위해 서버레 요청 후, 그 결과를 받는 경우
+
+                    }else if(responseJson.responseType=="close"){
+                        //4.방 폐쇄
+                        
+                    }
+                }
+            }
+
+            //메시지 보내기
+            const sendMsg=()=>{
+                // ws.send(txt.value);
+                //클라이언트와 서버간의 정보를 주고받는 형식을 만들어놓아야 함
+                //그 방식을 프로토콜이라고 함.
+                /*
+                [접속 시 구성할 요청정보]
+                {
+                    "requestType":"connect",
+                    "userId" : "zino1187",
+                }
+                [응답 시 구성할 요청정보]
+                {
+                    "responseType":"connect",
+                    "data" : [
+                        {
+                            "useId":"scott"
+                        },
+                        {
+                            "useId":"adams"
+                        }
+                    ]
+                }
+                */
+                let msg = {};
+                msg["requestType"]="chat";
+                msg["data"]=txt.value;
+                /*
+                    {
+                        "requestType":"chat",
+                        "data":"나 배고파"
+                    }
+                */
+                request(JSON.stringify(msg));
+                txt.value="";
+            }
+
+            return{ws, area, txt, log, userList, sendMsg, connect}
+        }
+    }).mount("#app")  
+
+</script>
+
+</body>
+</html>
