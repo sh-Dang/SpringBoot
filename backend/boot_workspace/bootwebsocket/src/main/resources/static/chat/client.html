@@ -43,7 +43,7 @@
         <h3>방 목록</h3>
         <ul>
             <li v-for="room in rooms" key="room.roomId">
-                <b>{{room.name}}</b> (참여자 수 : {{room.user.length}})
+                <b>{{room.roomName}}</b> (참여자 수 : {{room.user.length}})
                 <ul>
                     <li v-for="user in room.users">{{user}}</li>
                     <input type="button" value="채팅에 참여하기" @click="enterRoom(room.roomId)">
@@ -72,7 +72,7 @@
             ==================================================*/
             const connect = ()=>{
                 if(!username.value.trim()){
-                    alert("이름을 입력하세요");
+                    alert("이름을 입력해주세요");
                     return;
                 }
                 //서버와 WebSocket연결시도
@@ -152,13 +152,16 @@
                 방 만들기
             ==================================================*/
             const createRoom =()=>{
-                if(roomName.value.trim()){ //방 이름이 비어있지 않다면
+                if(noSocketException())return;
+                if (roomName.value && roomName.value.trim()) { //방 이름이 비어있지 않다면, 공백도 안된다는 처리
                     send({
-                        type:"ROOM_CREATE",
-                        sender:username.value,
-                        content:roomName.value
+                        type: "ROOM_CREATE",
+                        sender: username.value,
+                        content: roomName.value
                     });
-                    roomName.value=""; //방이름 초기화
+                    roomName.value = ""; //방이름 초기화
+                }else{
+                    alert("생성하려는 방 제목을 입력해 주세요");
                 }
             }
 
@@ -166,6 +169,7 @@
                 방에 입장
             ==================================================*/
             const enterRoom = (roomId) => {
+                if(noSocketException())return;
                 send({
                     type:"ROOM_ENTER",
                     sender:username.value,
@@ -182,6 +186,15 @@
                     sender:username.value,
                     roomId:roomId
                 })
+            }
+
+            //연결하지 않아서 Socket이 없는 경우에 대한 안내메시지
+            function noSocketException(){
+                if(socket==null){
+                    alert("유저접속을 먼저 시도해 주세요");
+                    return true;
+                }
+                return false;
             }
 
             return{isConnected, username, message, users, messages, roomName, rooms,
