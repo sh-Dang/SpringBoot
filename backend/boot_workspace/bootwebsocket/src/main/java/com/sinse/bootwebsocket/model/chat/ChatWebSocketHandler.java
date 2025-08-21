@@ -2,14 +2,12 @@ package com.sinse.bootwebsocket.model.chat;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sinse.bootwebsocket.dto.ChatMessage;
+import com.sinse.bootwebsocket.dto.ChatRoom;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.*;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 //javaee 순수 api로 serverEndpoint를 구현했던 클래스와 같은 역할을 수행하는 클래스
@@ -27,6 +25,9 @@ public class ChatWebSocketHandler implements WebSocketHandler {
     //접속자 목록을 모아놓은 Session의 집합체(내부적으로 보유한 민감정보들을 다룰 session())
     //민감정보를 포함하지 않는 client용 userSession은 connectedUser로 관리
     private final Set<WebSocketSession> sessions = new ConcurrentHashMap<>().newKeySet();
+
+    //방 목록을 저장할 수 있는 Set
+    private final Map<String, ChatRoom> roomStorage =  new ConcurrentHashMap<>();//thread 안정성이 높다 : concurrent
 
     //javaee api의 @OnOpen과 동일
     @Override
@@ -74,19 +75,35 @@ public class ChatWebSocketHandler implements WebSocketHandler {
                 broadcast("/users",connectedUsers);
             }
             case "MESSAGE" -> {
-
+                broadcast("/messages", chatMessage);
             }
             case "ROOM_CREATE" -> {
-
+                //방을 생성
+                String uuid = UUID.randomUUID().toString();
+                ChatRoom chatRoom = new ChatRoom();
+                chatRoom.setRoomId(uuid); // UUID
+                //콘텐트(ChatMessage의 형식에 맞추어서 받음)
+                chatRoom.setRoomName(chatMessage.getContent()); // Content(방 제목)
+                roomStorage.put(uuid, chatRoom);//Map 생성자는 (key 값, 담으려는정보)
+                broadcast("/rooms",roomStorage.values()); // values() : 식별하는 key값을 제거한 value만 남겨넘겨주는  Map<>의 메서드
             }
             case "ROOM_LIST" -> {
 
             }
             case "ROOM_ENTER" -> {
-
+                //Map에 모여있는 룸들 중, 클라이언트가 참여하기를 원하는 룸을 검색하자
+                ChatRoom chatRoom = roomStorage.get(chatMessage.getRoomId());
+                if(chatRoom!=null){
+                    chatRoom.getUser().add(chatMessage.getSender()); //참여자로 등록
+                }
+                broadcast("/rooms",roomStorage.values());
             }
             case "ROOM_LEAVE" -> {
-
+                ChatRoom chatRoom = roomStorage.get(chatMessage.getRoomId());
+                if(chatRoom!=null){
+                    chatRoom.getUser().remove(chatMessage.getSender()); //room에서 sender를 제거
+                }
+                broadcast("/rooms",roomStorage.values());
             }
         }
     }

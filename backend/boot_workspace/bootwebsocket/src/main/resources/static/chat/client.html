@@ -30,6 +30,28 @@
             <li v-for="user in users">{{user}}</li>
         </ul>
 
+        <h3>메시지 로그</h3>
+        <ul>
+            <p v-for="msg in messages">{{msg.sender}} : {{msg.content}}</p>
+        </ul>
+
+        <div>
+            <input type="text" placeholder="방 이름 입력" v-model="roomName">
+            <input type="button" value="방 만들기" @click="createRoom()">
+        </div>
+
+        <h3>방 목록</h3>
+        <ul>
+            <li v-for="room in rooms" key="room.roomId">
+                <b>{{room.name}}</b> (참여자 수 : {{room.user.length}})
+                <ul>
+                    <li v-for="user in room.users">{{user}}</li>
+                    <input type="button" value="채팅에 참여하기" @click="enterRoom(room.roomId)">
+                    <input type="button" value="나가기" @click="leaveRoom(room.roomId)">
+                </ul>
+            </li>
+        </ul>
+
     </div>
 
 
@@ -41,6 +63,9 @@
             const username = ref(""); //사용자명 바인딩 변수
             const message = ref(""); //보내는 메시지
             const users = ref([]); //전체 접속자 목록
+            const messages = ref([]); //채팅 메시지 목록
+            const roomName = ref(); //방이름(제목)
+            const rooms = ref([]); //방의 목록
             let socket = null;
             /*==================================================
                 서버에 접속
@@ -68,6 +93,10 @@
                     let json = JSON.parse(e.data);
                     if(json.destination=="/users"){//서버가 보낸 정보가 유저 목록임을 알 수 있다
                         users.value=json.body;
+                    }else if(json.destination=="/messages"){
+                        messages.value.push(json.body);
+                    }else if(json.destination=="/rooms"){
+                        rooms.value = json.body;
                     }
                 }
             }
@@ -108,9 +137,55 @@
                 //소켓이 닫힌 상태에서는 브로드캐스팅 대상이 아니기 때문에
                 //현재 접속자 목록에서 나를 수동으로 제거한다.
                 let newUsers=[];
+
+                //기존 유저목록이 들어있는 배열에서, 현재 사용자를 제거한 후 최종 배열을 생성
+                for(let i=0;i<users.length;i++){
+                    if(users.value[i] != username.value){
+                        newUsers.push(users.value);
+                    }
+                }
+                users.value=newUsers;
                 //최종적으로 만들어진 배열을 다시 대입해서 넣으면 끝
             }
-            return{isConnected, username, message, users, connect, disconnect, sendMessage}
+
+            /*==================================================
+                방 만들기
+            ==================================================*/
+            const createRoom =()=>{
+                if(roomName.value.trim()){ //방 이름이 비어있지 않다면
+                    send({
+                        type:"ROOM_CREATE",
+                        sender:username.value,
+                        content:roomName.value
+                    });
+                    roomName.value=""; //방이름 초기화
+                }
+            }
+
+            /*==================================================
+                방에 입장
+            ==================================================*/
+            const enterRoom = (roomId) => {
+                send({
+                    type:"ROOM_ENTER",
+                    sender:username.value,
+                    roomId:roomId
+                })
+            }
+
+            /*==================================================
+                방 나가기
+            ==================================================*/
+            const leaveRoom = (roomId) => {
+                send({
+                    type:"ROOM_LEAVE",
+                    sender:username.value,
+                    roomId:roomId
+                })
+            }
+
+            return{isConnected, username, message, users, messages, roomName, rooms,
+                   connect, disconnect, sendMessage, createRoom, enterRoom, leaveRoom}
         }
     }).mount("#app")
 

@@ -8,7 +8,7 @@
 ========================================
 
 spring ---리눅스, docker
-spring mas, spring security
+spring MSA, spring security
 -->라이브 커머스 쇼핑몰, react
 
 {
