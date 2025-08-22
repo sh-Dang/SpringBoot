@@ -1,11 +1,9 @@
 package com.sinse.broadcastapp.model.chat;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sinse.broadcastapp.dto.ResponseChat;
 import com.sinse.broadcastapp.dto.ResponseConnect;
-import com.sinse.broadcastapp.dto.User;
 import jakarta.websocket.*;
 import jakarta.websocket.server.ServerEndpoint;
 import lombok.extern.slf4j.Slf4j;

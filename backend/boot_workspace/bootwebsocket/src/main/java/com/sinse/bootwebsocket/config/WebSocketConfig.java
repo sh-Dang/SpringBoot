@@ -1,5 +1,6 @@
 package com.sinse.bootwebsocket.config;
 
+import com.sinse.bootwebsocket.model.chat.ChatTextWebSocketHandler;
 import com.sinse.bootwebsocket.model.chat.ChatWebSocketHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
@@ -15,10 +16,11 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 public class WebSocketConfig implements WebSocketConfigurer {
     //생성자가 자동으로 정의되어 있으므로 Autowired나 명시적 생성자 주입이 필요 없어짐
     private final ChatWebSocketHandler chatWebSocketHandler;
+    private final ChatTextWebSocketHandler chatTextWebSocketHandler;
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(chatWebSocketHandler, "/ws")
+        registry.addHandler(chatTextWebSocketHandler, "/ws")
                 .setAllowedOrigins("*");
     }
 }

@@ -85,7 +85,8 @@
                     send({
                         type:"CONNECT", //요청타입
                         sender:username.value //보낸사람
-                    })
+                    });
+                    send({type:"ROOM_LIST"});
                 }
                 //서버로부터 메시지를 받을 때 실행되는 콜백
                 socket.onmessage = (e)=>{
