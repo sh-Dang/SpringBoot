@@ -35,8 +35,12 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf:3.5.4")
     // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-jpa
     implementation("org.springframework.boot:spring-boot-starter-data-jpa:3.5.4")
-// https://mvnrepository.com/artifact/com.mysql/mysql-connector-j
+    // https://mvnrepository.com/artifact/com.mysql/mysql-connector-j
     implementation("com.mysql:mysql-connector-j:8.0.33")
+
+    //웹 소켓 설치
+    // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-websocket
+    implementation("org.springframework.boot:spring-boot-starter-websocket:3.5.4")
 }
 
 tasks.named('test') {

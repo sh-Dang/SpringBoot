@@ -8,6 +8,6 @@ import lombok.Data;
 public class StoreDTO {
     private int store_id;
     private String id;
-    private String password;
+    private String pwd;
     private String store_name;
 }

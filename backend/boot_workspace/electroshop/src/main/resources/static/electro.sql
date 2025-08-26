@@ -34,3 +34,22 @@ create table admin(
     , password varchar(30)
     , name varchar(20)
 );
+
+-- product table 생성
+create table product
+(
+    product_id   int primary key auto_increment,
+    product_name varchar(20) not null,
+    price        int         not null,
+    brand        varchar(20) not null,
+    store_id     int,
+    constraint fk_product_store_id
+        foreign key (store_id)
+            references store (store_id)
+);
+
+-- product table 인서트
+insert into product(product_name, price, brand, store_id)
+values ('가지','1000', '여주밭', 1)
+, ('핸드백', '1000000', '마루마루', 4)
+, ('순대모듬', '20000', '용인순대', 5);

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {font-family: Arial, Helvetica, sans-serif;}
+        * {box-sizing: border-box;}
+
+        input[type=text], select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            margin-top: 6px;
+            margin-bottom: 16px;
+            resize: vertical;
+        }
+
+        input[type=button] {
+            background-color: #04AA6D;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        input[type=button]:hover {
+            background-color: #45a049;
+        }
+
+        .container {
+            border-radius: 5px;
+            background-color: #f2f2f2;
+            padding: 20px;
+        }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+</head>
+<body>
+
+<h3>회원 로그인</h3>
+
+<div class="container">
+    <form id="form1">
+        <input type="text" name="id" placeholder="회원 id">
+        <input type="text" name="pwd" placeholder="회원 비밀번호">
+        <input type="button" value="Submit" id="bt_login">
+    </form>
+
+</div>
+<script>
+    function login(){
+        $.ajax({
+            url:"/member/login",
+            method:"post",
+            data : $("#form1").serialize(),/*왜? -> form문자열로 바뀜 */
+            success:(data)=>{
+                console.log(data);
+                location.href = "/shop/main";
+            },
+            error:()=>{
+                console.log("로그인 정보가 올바르지 않습니다.");
+            }
+        })
+    }
+
+    $(()=>{
+        $("#bt_login").click(()=>{
+            login();
+        });
+    });
+</script>
+</body>
+</html>
+
