@@ -1,5 +1,6 @@
 package com.sinse.electroshop.websocket.config;
 
+import com.sinse.electroshop.websocket.interceptor.HttpSessionInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.*;
@@ -10,8 +11,9 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/websocket")
-                .setAllowedOrigins("*");
+        registry.addEndpoint("/ws")
+                .setAllowedOrigins("*")
+                .addInterceptors(new HttpSessionInterceptor());
     }
 
     @Override

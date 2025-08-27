@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AdminLTE 3 | Dashboard</title>
+
+    <!-- Google Font: Source Sans Pro -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="/admin/plugins/fontawesome-free/css/all.min.css">
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <!-- Tempusdominus Bootstrap 4 -->
+    <link rel="stylesheet" href="/admin/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
+    <!-- iCheck -->
+    <link rel="stylesheet" href="/admin/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
+    <!-- JQVMap -->
+    <link rel="stylesheet" href="/admin/plugins/jqvmap/jqvmap.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="/admin/dist/css/adminlte.min.css">
+    <!-- overlayScrollbars -->
+    <link rel="stylesheet" href="/admin/plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
+    <!-- Daterange picker -->
+    <link rel="stylesheet" href="/admin/plugins/daterangepicker/daterangepicker.css">
+    <!-- summernote -->
+    <link rel="stylesheet" href="/admin/plugins/summernote/summernote-bs4.min.css">
+    <script src="/electro/js/jquery.min.js"></script>
+</head>
+<body class="hold-transition sidebar-mini">
+
+<!-- 사이드바 -->
+<div th:replace="~{store/fragments/side_navi :: side_navi}"></div>
+
+<!-- 본문 -->
+<div class="content-wrapper" style="margin-left: 250px; padding: 20px;">
+    <h2>상품 등록 페이지 입니다.</h2>
+    <form id="form">
+        <!--나중에 store_id 넣을 것임-->
+        <input type="hidden" name="store.store_id" value="1"><br><br>
+        <input type="text" name="product_name" placeholder="상품이름"><br><br>
+        <input type="number" name="price" placeholder="가격"><br><br>
+        <input type="text" name="brand" placeholder="브랜드"><br><br>
+        <input type="button" value="상품 등록하기" id="bt_register">
+    </form>
+</div>
+<script>
+    function registerProduct() {
+        $.ajax({
+            url: "/admin/register",
+            method: "POST",
+            data: $("#form").serialize(),
+            success : function (data) {
+                console.log(data);
+                // location.href="/admin/products";
+            },
+            error : function(data){
+                console.log(data);
+            }
+        });
+    }
+    $(()=>{
+       $("#bt_register").click(()=>{
+            registerProduct();
+       });
+    });
+
+</script>
+
+</body>
+</html>
