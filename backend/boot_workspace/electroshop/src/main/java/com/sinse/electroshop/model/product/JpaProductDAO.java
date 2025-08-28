@@ -12,14 +12,19 @@ public class JpaProductDAO implements ProductDAO {
     private final ProductJpaRepository productJpaRepository;
 
     @Override
+    public List<Product> selectByStoreId(int storeId) {
+        return productJpaRepository.findByStore_storeId(storeId);
+    }
+
+    @Override
     public List<Product> getProductList() {
         //직접 일 함 => 여기서는 productJpaRepository Interface에 시킴
         return productJpaRepository.findAll();
     }
 
     @Override
-    public Product findProductById(int product_id) {
-        return productJpaRepository.findById(product_id);
+    public Product findProductById(int productId) {
+        return productJpaRepository.findById(productId);
     }
 
     @Override

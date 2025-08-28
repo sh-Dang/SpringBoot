@@ -11,6 +11,11 @@ import java.util.List;
 public class ProductServiceImpl implements ProductService {
     private final ProductDAO productDAO;
 
+    @Override
+    public List<Product> selectByStoreId(int storeId) {
+        return productDAO.selectByStoreId(storeId);
+    }
+
     //모든 productList 반환
     @Override
     public List<Product> getProductList() {
@@ -20,8 +25,8 @@ public class ProductServiceImpl implements ProductService {
 
     //productDetail 반환
     @Override
-    public Product getProductById(int product_id) {
-        return productDAO.findProductById(product_id);
+    public Product getProductById(int productId) {
+        return productDAO.findProductById(productId);
     }
 
     @Override

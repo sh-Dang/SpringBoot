@@ -7,5 +7,8 @@ import java.util.List;
 
 public interface ProductJpaRepository extends JpaRepository<Product, Integer> {
     public List<Product> findAll();
-    public Product findById(int product_id);
+    /// Store의 매핑법 기억하기. ??모르겠다 이건
+    public List<Product> findByStore_storeId(int storeId);
+    public Product findById(int productId);
+
 }

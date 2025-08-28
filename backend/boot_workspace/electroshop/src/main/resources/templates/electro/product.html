@@ -130,8 +130,8 @@
                     <!-- Product details -->
                     <div class="col-md-5">
                         <div class="product-details">
-                            <h2 class="product-name" th:text="${product.product_name}"></h2>
-                            <input type="hidden" th:value="${product.product_id}" id="product_id">
+                            <h2 class="product-name" th:text="${userProduct.productName}"></h2>
+                            <input type="hidden" th:value="${userProduct.productId}" id="productId">
                             <div>
                                 <div class="product-rating">
                                     <i class="fa fa-star"></i>
@@ -444,10 +444,10 @@
 
                     //STOMP 메시지 보내기
                     stompClient.send("/app/connect", {}, JSON.stringify({
-                        content:$("#product_id").val()
+                        content:$("#productId").val()
                     }));
 
-                    stompClient.subscribe("/topic/connected", (message) => {
+                    stompClient.subscribe("/topic/users", (message) => {
                         console.log("서버 응답:", JSON.parse(message.body));
                     });
                 });

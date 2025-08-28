@@ -1,6 +1,7 @@
 package com.sinse.electroshop.websocket.interceptor;
 
 import com.sinse.electroshop.domain.Member;
+import com.sinse.electroshop.domain.Store;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.server.ServerHttpRequest;
@@ -28,10 +29,16 @@ public class HttpSessionInterceptor implements HandshakeInterceptor {
         HttpSession httpSession = servletRequest.getServletRequest().getSession(false);
 
         if(httpSession != null){
-            Member member = (Member)httpSession.getAttribute("member");
-            //HttpSession에 있는걸 WebSocketSession으로 옮김
-            attributes.put("member", member);
-            log.debug("handshake시점에 추출한 회원의 이름은" + member.getId());
+            if(httpSession.getAttribute("member") != null) { //일반 회원인 경우
+                Member member = (Member) httpSession.getAttribute("member");
+                //HttpSession에 있는걸 WebSocketSession으로 옮김
+                attributes.put("member", member);
+                log.debug("handshake시점에 추출한 회원의 이름은" + member.getId());
+            }else if(httpSession.getAttribute("store") != null){ //상점 회원인 경우
+                Store store = (Store) httpSession.getAttribute("store");
+                attributes.put("store", store);
+                log.debug("상점handshake시점에 상점추출한 상점의 상점이름은" + store.getBusinessId());
+            }
         }
         //true를 반환해야 handshake가 정상적으로 진행 됨->그럼 return조건으로 뭔가 제약을 걸수도 있을 듯
         return true;

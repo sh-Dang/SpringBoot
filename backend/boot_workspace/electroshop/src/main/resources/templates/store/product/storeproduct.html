@@ -39,10 +39,11 @@
         </tr>
         </thead>
         <tbody>
-        <tr th:each="p : ${productList}">
+        <tr th:each="p : ${productListByStore}">
             <td th:text="${p.productId}"></td>
-            <td th:href="@{/admin/detail(id=${p.productId})}"
-                th:text="${p.productName}"></td>
+            <td>
+                <a th:href="@{/product/detail(product_id=${p.productId})}" th:text="${p.productName}"></a>
+            </td>
             <td th:text="${p.price}"></td>
             <td th:text="${p.brand}"></td>
             <td th:text="${p.store.storeName}"></td>

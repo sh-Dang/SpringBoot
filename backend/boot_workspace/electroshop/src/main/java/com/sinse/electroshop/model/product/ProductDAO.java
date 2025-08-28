@@ -6,7 +6,8 @@ import java.util.List;
 
 public interface ProductDAO {
     public List<Product> getProductList();
-    public Product findProductById(int product_id);
-
+    public Product findProductById(int productId);
     public void registerProduct(Product product);
+
+    public List<Product> selectByStoreId(int storeId);
 }

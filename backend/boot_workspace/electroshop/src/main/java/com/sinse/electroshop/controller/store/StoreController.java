@@ -2,10 +2,14 @@ package com.sinse.electroshop.controller.store;
 
 import com.sinse.electroshop.controller.dto.StoreDTO;
 import com.sinse.electroshop.domain.Store;
-import com.sinse.electroshop.model.shop.StoreService;
+import com.sinse.electroshop.exception.StoreNotFoundException;
+import com.sinse.electroshop.model.store.StoreService;
+import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -26,24 +30,53 @@ public class StoreController {
     //로그인폼 요청 처리
     @GetMapping("/store/loginform")
     public String loginForm() {
-        return "storeRegister";
+        return "store/storeRegister";
     }
 
     //상점의 로그인 요청 처리
-    @PostMapping("/store/login")
+    @PostMapping("/store/register")
     @ResponseBody
-    public ResponseEntity<String> login(StoreDTO storeDTO) {
+    public ResponseEntity<String> register(StoreDTO storeDTO) {
 
         log.debug(storeDTO.toString());
 
         //파라미터가 담겨있는 객체는 DTO이므로, Model 객체인 Store로 옮기자
         Store store = new Store();
-        store.setBusiness_id(storeDTO.getId());
+        store.setBusinessId(storeDTO.getId());
         store.setPassword(storeDTO.getPwd());
-        store.setStore_name(storeDTO.getStore_name());
+        store.setStoreName(storeDTO.getStoreName());
 
         storeService.register(store);
 
         return ResponseEntity.ok("success");
     }
+
+    //상점의 로그인 요청 처리
+    @PostMapping("/store/login")
+    @ResponseBody
+    public ResponseEntity<String> login(StoreDTO storeDTO, HttpSession httpSession) throws StoreNotFoundException {
+
+        log.debug(storeDTO.toString());
+
+        //파라미터가 담겨있는 객체는 DTO이므로, Model 객체인 Store로 옮기자
+        Store store = new Store();
+        store.setBusinessId(storeDTO.getId());
+        store.setPassword(storeDTO.getPwd());
+        store.setStoreName(storeDTO.getStoreName());
+
+        Store obj = storeService.login(store);
+        log.debug("로그인하려고 지금 담아온 로그인 store객체는"+obj.toString());
+
+        //세션에 담기
+        httpSession.setAttribute("store", obj);
+
+        return ResponseEntity.ok("success");
+    }
+
+
+    @ExceptionHandler(StoreNotFoundException.class)
+    public ResponseEntity<String> handleException(StoreNotFoundException ex){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
+
 }

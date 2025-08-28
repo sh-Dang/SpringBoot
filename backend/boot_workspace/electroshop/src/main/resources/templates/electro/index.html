@@ -64,11 +64,11 @@
                                 <img src="/electro/img/shop01.png" alt="">
                             </div>
                             <div class="shop-body">
-                                <h3>{{product.store.store_name}}</h3>
-                                <p>{{product.product_name}}</p>
+                                <h3>{{product.store.storeName}}</h3>
+                                <p>{{product.productName}}</p>
                                 <p>{{product.price}}</p>
                                 <p>{{product.brand}}</p>
-                                <a :href="'/product/detail?product_id='+product.product_id" class="cta-btn">Shop now <i class="fa fa-arrow-circle-right"></i></a>
+                                <a :href="'/user/product/detail?productId='+product.productId" class="cta-btn">Shop now <i class="fa fa-arrow-circle-right"></i></a>
                             </div>
                         </div>
                     </div>
@@ -915,13 +915,13 @@
     const {createApp, ref, reactive} = Vue;
     createApp({
         setup(){
-            const productList = ref([1,2,3]);
+            const productList = ref([]);
             const getProductList=()=>{
                 $.ajax({
                     url:"/product",
                     method:"GET",
                     success:function(data){
-                        console.log(data.product_name);
+                        console.log(data.productName);
                         productList.value=data;
                     }
                 })

@@ -40,31 +40,54 @@
 </head>
 <body>
 
-<h3>상점등록 폼</h3>
+<h3>상점등록 / 로그인 폼</h3>
 
 <div class="container">
+    <h3>회원가입 폼</h3>
     <form id="form1">
         <input type="text" id="fname" name="id" placeholder="상점 ID 입력">
         <input type="text" id="lname" name="pwd" placeholder="비밀번호 입력..">
-        <input type="text" name="store_name" placeholder="Your last name..">
-        <input type="button" value="Submit" id="bt_login">
+        <input type="text" name="storeName" placeholder="Your last name..">
+        <input type="button" value="회원 가입" id="bt_register">
+    </form>
+
+    <h3>로그인 폼</h3>
+    <form id="form2">
+        <input type="text" id="namef" name="id" placeholder="상점 ID 입력">
+        <input type="text" id="namel" name="pwd" placeholder="비밀번호 입력..">
+        <input type="button" value="로그인" id="bt_login">
     </form>
 
 </div>
 <script>
+    function register(){
+        //상점 로그인 요청
+        $.ajax({
+            url:"/store/register",
+            type:"POST",
+            data:$("#form1").serialize(),
+            success:function(data){
+                console.log(data);
+                alert("상품 등록이 완료됐습니다.");
+            }
+        });
+    }
     function login(){
         //상점 로그인 요청
         $.ajax({
             url:"/store/login",
             type:"POST",
-            data:$("#form1").serialize(),
+            data:$("#form2").serialize(),
             success:function(data){
-                console.log(data);
+                location.href="/admin/main";
             }
         });
     }
 
     $(()=>{
+        $("#bt_register").click(()=>{
+            register();
+        });
         $("#bt_login").click(()=>{
             login();
         });
