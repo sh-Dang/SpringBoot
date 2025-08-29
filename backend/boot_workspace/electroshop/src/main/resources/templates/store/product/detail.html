@@ -6,7 +6,8 @@
     <title>AdminLTE 3 | Dashboard</title>
 
     <!-- Google Font: Source Sans Pro -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="/admin/plugins/fontawesome-free/css/all.min.css">
     <!-- Ionicons -->
@@ -36,6 +37,7 @@
 <div th:replace="~{store/fragments/side_navi :: side_navi}"></div>
 
 <!-- 본문 -->
+
 <div id="app">
     <div class="content-wrapper" style="margin-left: 250px; padding: 20px;">
         <h2>상품 상세 페이지입니다.</h2>
@@ -54,47 +56,80 @@
             <input type="button" value="채팅 연결끊기" id="bt_disconnect">
         </form>
     </div>
+
+
+    <div class="chattingLog" v-if="isConnected">
+        <!-- 채팅참여자 목록 -->
+        <input type="hidden">
+        <input type="hidden" v-model="message" th:value="${session.store.businessId}">
+        <textarea style="margin-left: 250px; padding: 20px;">{{users.join('\n')}}</textarea>
+
+        <!-- /채팅참여자 목록 -->
+
+        <!-- 채팅 폼 -->
+        <div class="content-wrapper" style="margin-left: 250px; padding: 20px;">
+            <h2>채팅창 입니다.</h2>
+            <h3 v-if="isConnected">방송중</h3>
+            <h3 v-else="isConnected">Live Off</h3>
+            <form id="form2">
+
+                <textarea style="height: 250px"></textarea>
+                <input type="text" name="product_name" placeholder="채팅 메시지 입력" @keyup.enter="sendMessage()"><br><br>
+                <input type="button" value="상품 등록하기" id="bt_send">
+            </form>
+        </div>
+        <!-- /채팅 폼 -->
+    </div>
 </div>
+
 <script>
     const {createApp, ref, reactive} = Vue;
     createApp({
-        setup(){
+        setup() {
             const isConnected = ref(false);
+            /*서버에서 보내온 메시지 배열*/
+            const users = ref([]);
             const messages = ref([]);
+            const message = ref();
+
 
             //STOMP 객체 선언
             let stompClient = null;
 
             //웹 소켓 서버접속
-            const connect =()=>{
+            const connect = () => {
                 const webSocket = new WebSocket('ws://localhost:9999/ws')
                 stompClient = new Stomp.over(webSocket); //웹소켓 위에 STOMP를 얹을 것이다
 
                 //STOMP를 이용한 서버 연결 시도
-                stompClient.connect({}, ()=>{
+                stompClient.connect({}, () => {
                     //서버에 연결되면 이 콜백함수가 호출 됨
                     isConnected.value = true;
 
                     //STOMP 메시지 보내기
                     stompClient.send("/app/connect", {}, JSON.stringify({
-                        senderType:"store",
-                        content:$("#product_id").val()
+                        senderType: "store",
+                        content: $("#product_id").val()
                     }));
 
                     //방 참여자 구독하기
                     stompClient.subscribe("/topic/users", (message) => {
                         console.log("서버 응답:", JSON.parse(message.body));
+                        users.value=JSON.parse(message.body);
                     });
                 });
             }
             /*meessages에 계속 뭔가 채워 넣어야 할듯*/
+            const sendMessage = () => {
+                console.log("ㅋㅋ메시지 전송 요청");
+            }
 
-            return{isConnected, messages
-                , connect}
+            return {
+                isConnected, users, message, messages
+                , connect, sendMessage
+            }
         }
     }).mount("#app");
 </script>
-
-
 </body>
 </html>

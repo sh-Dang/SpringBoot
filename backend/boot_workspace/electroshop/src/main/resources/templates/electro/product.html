@@ -39,7 +39,14 @@
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <!-- 웹소켓 상에서  -->
     <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
-
+    <style>
+        #reviews{
+            height:20px;
+        }
+        #reviews .review-heading, #reviews .review-body{
+            height: 100%;
+        }
+    </style>
 </head>
 <body>
     <div id="app">
@@ -219,20 +226,12 @@
                                                 <ul class="reviews" v-for="message in messages">
                                                     <li>
                                                         <div class="review-heading">
-                                                            <h5 class="name">John</h5>
+                                                            <h5 class="name">{{message.sender}}</h5>
                                                         </div>
                                                         <div class="review-body">
-                                                            <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua</p>
+                                                            <p>{{message.content}}</p>
                                                         </div>
                                                     </li>
-
-                                                </ul>
-                                                <ul class="reviews-pagination">
-                                                    <li class="active">1</li>
-                                                    <li><a href="#">2</a></li>
-                                                    <li><a href="#">3</a></li>
-                                                    <li><a href="#">4</a></li>
-                                                    <li><a href="#"><i class="fa fa-angle-right"></i></a></li>
                                                 </ul>
                                             </div>
                                         </div>
@@ -241,9 +240,13 @@
                                         <!-- Review Form -->
                                         <div class="col-md-3" v-if="isConnected">
                                             <div id="review-form">
+                                                <h3>
+                                                    참여자 수 <span>{{users.length}}</span>
+                                                </h3>
                                                 <form class="review-form">
-                                                    <textarea class="input" placeholder="메시지를 입력하세요"></textarea>
-                                                    <button class="primary-btn">Submit</button>
+                                                    <input type="hidden" id="user_id" th:value="${session.member.id}">
+                                                    <textarea class="input" placeholder="메시지를 입력하세요" v-model="message" @keyup.enter="sendMessage()"></textarea>
+                                                    <input type="button" @click="sendMessage()" class="primary-btn">Submit</input>
                                                 </form>
                                             </div>
                                         </div>
@@ -427,7 +430,9 @@
     createApp({
         setup(){
             const isConnected = ref(false);
-            const messages = ref([1,2]);
+            const message = ref("");
+            const messages = ref([]);
+            const users = ref([]);
 
             //STOMP 객체 선언
             let stompClient = null;
@@ -447,15 +452,34 @@
                         content:$("#productId").val()
                     }));
 
+                    //상점이 들어올 때 시점을 알기위한 구독요청
                     stompClient.subscribe("/topic/users", (message) => {
                         console.log("서버 응답:", JSON.parse(message.body));
+                        users.value=JSON.parse(message.body);
+                    });
+
+                    //서버의 메시지 구독요청
+                    stompClient.subscribe("/topic/messages", (message) => {
+                        console.log("들어온 내용", JSON.parse(message.body));
+                        messages.value.push(JSON.parse(message.body));
                     });
                 });
             }
+
+            const sendMessage = ()=> {
+                console.log("채팅요청ㅋㅋ")
+                if(message.value.trim()){
+                    console.log("제대로 들어옴")
+                    stompClient.send("/app/chat.send", {}, JSON.stringify({
+                        sender : $("#user_id").val(),
+                        content : message.value.trim()
+                    }));
+                }
+            }
             /*meessages에 계속 뭔가 채워 넣어야 할듯*/
 
-            return{isConnected, messages
-                    , connect}
+            return{isConnected, users, message, messages
+                    , connect, sendMessage}
         }
     }).mount("#app");
 </script>
