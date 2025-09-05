@@ -53,22 +53,20 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
-
-                .authorizeHttpRequests(auth->auth
+                .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/main").permitAll()
                         .requestMatchers("/test").permitAll()
                         .anyRequest().authenticated()
 
                 )
-                .formLogin(form-> form
+                .formLogin(form -> form
                         .loginPage("/loginform") //로그인 폼을 만나기 위한 요청 주소 등록
                         .loginProcessingUrl("/login") //로그인 요청을 처리하는 uri 등록
                         .usernameParameter("id")
                         .passwordParameter("pwd")
-                        .defaultSuccessUrl("/main",true)
+                        .defaultSuccessUrl("/main", true)
                         .permitAll()
                 );
-
         return http.build();
     }
 }

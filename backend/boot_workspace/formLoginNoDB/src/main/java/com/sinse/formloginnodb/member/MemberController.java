@@ -25,7 +25,7 @@ public class MemberController {
         UserDetails userDetails=(UserDetails)auth.getPrincipal();
         String id = userDetails.getUsername();
         model.addAttribute("username","session : "+id);
-
+//        UsertDetails ss = ((SecurityContext) session.getAttribute("SPRING_SECURITY_CONTEXT")).getAuthentication().getPrincipal();
         return "member/index";
     }
 
