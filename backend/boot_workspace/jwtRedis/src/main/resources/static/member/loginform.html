@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap');
+
+        :root {
+            --primary-green: #2a9d8f;
+            --dark-green: #264653;
+            --light-gray: #f8f9fa;
+            --gray: #dee2e6;
+            --dark-gray: #495057;
+            --white: #ffffff;
+            --danger-red: #e76f51;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: var(--light-gray);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background-color: var(--white);
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        h3 {
+            color: var(--dark-green);
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        input[type=text], input[type=password] {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid var(--gray);
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 16px;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        input[type=text]:focus, input[type=password]:focus {
+            outline: none;
+            border-color: var(--primary-green);
+            box-shadow: 0 0 0 3px rgba(42, 157, 143, 0.2);
+        }
+
+        input[type=button] {
+            background-color: var(--primary-green);
+            color: white;
+            padding: 15px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 18px;
+            font-weight: 500;
+            transition: background-color 0.3s;
+        }
+
+        input[type=button]:hover {
+            background-color: #21867a; /* A slightly darker green */
+        }
+
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+</head>
+<body>
+
+<div class="container">
+    <form onsubmit="return false;">
+        <h3>로그인</h3>
+        <input type="text" name="id" placeholder="아이디">
+        <input type="password" name="password" placeholder="비밀번호">
+        <input type="button" value="로그인">
+    </form>
+</div>
+
+<script>
+    $("input[type='button']").click(() => {
+        const loginData = {
+            id: $("input[name='id']").val(),
+            password: $("input[name='password']").val()
+        };
+
+        $.ajax({
+            url: "/member/login", // Corrected URL
+            method: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(loginData), // Stringify data for JSON
+            success: function(result, status, xhr) {
+                // Store the token in localStorage
+                const token = xhr.getResponseHeader('Authorization');
+                if (token) {
+                    localStorage.setItem('jwtToken', token);
+                    console.log("로그인 성공:", result);
+                    console.log("저장된 토큰:", token);
+                    // Redirect to main page or do something else
+                    // window.location.href = "/main";
+                } else {
+                    console.error("로그인 성공했으나 토큰을 받지 못했습니다.");
+                }
+            },
+            error: function(xhr) {
+                console.error("로그인 실패:", xhr.responseText);
+                alert("로그인에 실패했습니다. 아이디와 비밀번호를 확인해주세요.");
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
