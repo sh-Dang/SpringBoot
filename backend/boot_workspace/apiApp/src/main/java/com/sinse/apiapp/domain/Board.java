@@ -8,7 +8,7 @@ import lombok.Data;
 @Table(name="board")
 public class Board {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name="board_id")
     private int boardId;
 
@@ -17,6 +17,6 @@ public class Board {
     private String content;
     @Column(name="regdate", insertable=false, updatable=false
     ,columnDefinition = "timestamp default CURRENT_TIMESTAMP")
-    private String regDate;
+    private String regdate;
     private int hit;
 }
