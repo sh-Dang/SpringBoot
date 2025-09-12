@@ -3,3 +3,4 @@
 - I will provide clear explanations and practical examples.
 - I will guide you through best practices and common pitfalls.
 - Feel free to ask any questions, big or small!
+- memorize what i asked and after my request, please make a markdown file with the summation of the stutied contents
