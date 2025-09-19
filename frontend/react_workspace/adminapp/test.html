@@ -1,0 +1,53 @@
+<script>
+/**
+ * **JQuery ajax
+    $.ajax({
+        url:"",
+        success:()=>{
+        }
+    })
+*/
+
+
+// Promise
+    //resolve, reject는 그냥 변수명
+    //근데 이건 함수 임
+    const p = new Promise((resolve, reject)=>{
+        console.log("실행");
+        setTimeout( function(){         //resolve가 호출 시
+            // resolve("서버와 통신 성공"); //Promise의 상태가 확장되어버림과 동시에 then()호출
+            reject("서버와의 통신 실패"); //Promise의 상태를 실패로 처리 동시에 catch()호출
+        }, 3000);
+    });
+/*    p.then((msg)=>{
+        console.log(msg);
+    }).catch((err)=>{
+        console.log(err);
+    });
+*/
+    //Promise는 내부적으로 3개의 상태를 가짐
+    //대기(Pending), 확정(FullFilled), 완료()
+    
+    //Promise를 좀 더 편하게 사용하려면? async/await를 사용할 수 있다.
+    //async가 붙어도 비동기가 되는것이 아님..=> promise가 반환된다는 의미로 통함
+    //async는 Promise를 사용하기 쉽게 제공되는, 또 하나의 방법
+    //async가 붙여진 함수는 반드시, Promise를 반환한다는 의미일 뿐.
+    //동기함순데 이 안에서 Promise를 반환하겠다 라는 뜻
+    console.log('1');
+    async function run(){
+//      return 5; //Promise.resolve(5);
+        // await p;
+        try{ // Promise의 resolve가 호출됐다고 생각하자
+            console.log('2');
+            const msg = await p; // await = p가 resolve 될 때까지 대기
+            console.log('3성공', msg);
+        }catch(err){ // Promise의 reject가 호출됐다고 생각하자
+            console.log('실패');
+        }
+        console.log('4');
+        
+    }
+    console.log('5');
+    run();
+    console.log('6');
+</script>

@@ -5,6 +5,7 @@ import Sidebar from './components/SideBar'
 import Footer from './components/Footer'
 import ProductList from './pages/product/ProductList'
 import ProductRegister from './pages/product/ProductRegister'
+import ProductDetail from './pages/product/ProductDetail'
 import OrderList from './pages/order/OrderList'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 
@@ -21,8 +22,12 @@ function App() {
                 <section className='content'></section>
             <Routes>
                 {/* 상품관련 */}
+                
                 {/* 상품목록 */}
                 <Route path="/product/list" element={<ProductList/>}/>
+
+                {/* 상품상세 */}
+                <Route path="/product/detail/:productId" element={<ProductDetail/>}/>
 
                 {/* 상품등록 */}
                 <Route path="/product/registerform" element={<ProductRegister/>}/>

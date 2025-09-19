@@ -14,5 +14,5 @@ public class ProductDTO {
     private int discount;
     private String detail;
     private SubCategoryDTO subCategoryDTO;
-    private List<MultipartFile> files;
+    private List<ProductFileDTO> productFileDTOList;
 }

@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { registerProduct } from "../../utils/ProductApi";
+import { useNavigate } from "react-router-dom";
 
 export default function ProductRegister(){
+    const navigate=useNavigate();
     const [files, setFiles]=useState([]); 
     const [previews, setPreviews]=useState([]); 
     
@@ -73,7 +75,14 @@ export default function ProductRegister(){
         // 바이너리 파일추가..(배열의 수만큼 반복하면서 sendData 에 넣기)
         files.forEach((file)=>sendData.append("files", file));
 
-        registerProduct(sendData);
+        registerProduct(sendData)
+        .then(res=>{ //서버로부터 응답정보가 올 경우 응답정보를 출력해보기
+            console.log("서버로 부터 응답받은 정보는 ", res);
+            navigate('/product/list');
+        })
+        .catch(err=>{
+            console.log("에러발생", err);
+        });
     }
 
     const handleInput = (e)=>{
